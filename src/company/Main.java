@@ -6,7 +6,8 @@ package company;
 public class Main {
     public static void main(String[] args){
 //        TODO: Change how you iterate through bits from trailing -> leading to just jumping to where we have 1s.
-//        TODO: Create an iterator class for it
+//        TODO: Create an iterator class for iterating through bits in the most optimal way
+//        TODO: Measure the time difference between normal iteration and optimal iteration
         Game game = new Game();
         game.play();
     }

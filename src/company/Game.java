@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Game {
     public String[] history;
     private boolean whiteTurn = true;
-    private boolean computerWhite = false;
+    private boolean computerWhite = true;
 
     public Game() {}
 

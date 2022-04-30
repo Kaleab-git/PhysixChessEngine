@@ -17,34 +17,34 @@ public class Board {
     static long KING_SIDE=-1085102592571150096L;
     static long QUEEN_SIDE=1085102592571150095L;
     static long KING_SPAN=460039L;
-    static long KNIGHT_SPAN=43234889994L;   
+    static long KNIGHT_SPAN=43234889994L;
     long NOT_WHITE_PIECES;
     long WHITE_PIECES;
     long BLACK_PIECES;
     long OCCUPIED;
     long EMPTY;
-    static long RankMasks8[] =/*from rank1 to rank8*/
+    static long[] RankMasks8 =/*from rank1 to rank8*/
             {
                     0xFFL, 0xFF00L, 0xFF0000L, 0xFF000000L, 0xFF00000000L, 0xFF0000000000L, 0xFF000000000000L, 0xFF00000000000000L
             };
-    static long FileMasks8[] =/*from fileA to FileH*/
+    static long[] FileMasks8 =/*from fileA to FileH*/
             {
                     0x101010101010101L, 0x202020202020202L, 0x404040404040404L, 0x808080808080808L,
                     0x1010101010101010L, 0x2020202020202020L, 0x4040404040404040L, 0x8080808080808080L
             };
-    static long DiagonalMasks8[] =/*from top left to bottom right*/
+    static long[] DiagonalMasks8 =/*from top left to bottom right*/
             {
                     0x1L, 0x102L, 0x10204L, 0x1020408L, 0x102040810L, 0x10204081020L, 0x1020408102040L,
                     0x102040810204080L, 0x204081020408000L, 0x408102040800000L, 0x810204080000000L,
                     0x1020408000000000L, 0x2040800000000000L, 0x4080000000000000L, 0x8000000000000000L
             };
-    static long AntiDiagonalMasks8[] =/*from top right to bottom left*/
+    static long[] AntiDiagonalMasks8 =/*from top right to bottom left*/
             {
                     0x80L, 0x8040L, 0x804020L, 0x80402010L, 0x8040201008L, 0x804020100804L, 0x80402010080402L,
                     0x8040201008040201L, 0x4020100804020100L, 0x2010080402010000L, 0x1008040201000000L,
                     0x804020100000000L, 0x402010000000000L, 0x201000000000000L, 0x100000000000000L
             };
-//    public static String mailbox[][] = {
+//    private static String mailbox[][] = {
 //            {"r","n","b","q","k","b","n","r"},
 //            {"p","p","p","p","p","p","p","p"},
 //            {" "," "," "," "," "," "," "," "},
@@ -54,13 +54,13 @@ public class Board {
 //            {"P","P","P","P","P","P","P","P"},
 //            {"R","N","B","Q","K","B","N","R"}};
 
-    public static String mailbox[][] = {
+    private static String mailbox[][] = {
             {"r","n","b","q","k"," ","n","r"},
             {" "," "," "," "," "," "," "," "},
-            {"B"," "," "," "," "," "," "," "},
+            {"B"," "," "," ","N"," "," "," "},
             {" "," "," ","r"," "," ","b"," "},
             {"q"," ","B"," ","R"," ","N"," "},
-            {" ","R"," "," "," "," "," "," "},
+            {" ","R","N"," "," "," "," "," "},
             {" ","p"," ","p","b","P"," "," "},
             {" "," ","B","B","B"," "," "," "}};
 
@@ -78,9 +78,14 @@ public class Board {
         this.BR = BR;
         this.BQ = BQ;
         this.BK = BK;
+        this.updateBitboards();
+        this.updateBoard();
     }
 
-    public Board() {}
+    public Board() {
+        this.updateBitboards();
+        this.updateBoard();
+    }
 
     public void updateBitboards() {
         String binary;
@@ -89,31 +94,19 @@ public class Board {
             binary = "0000000000000000000000000000000000000000000000000000000000000000";
 //          Flip the ith bit starting from right to left so as to have the LSB represent the top left corner
             binary = binary.substring(i+1) + "1" + binary.substring(0, i);
-            switch (mailbox[i/8][i%8]){
-                case "P": WP+=convertStringToBitboard(binary);
-                    break;
-                case "N": WN+=convertStringToBitboard(binary);
-                    break;
-                case "B": WB+=convertStringToBitboard(binary);
-                    break;
-                case "R": WR+=convertStringToBitboard(binary);
-                    break;
-                case "Q": WQ+=convertStringToBitboard(binary);
-                    break;
-                case "K": WK+=convertStringToBitboard(binary);
-                    break;
-                case "p": BP+=convertStringToBitboard(binary);
-                    break;
-                case "n": BN+=convertStringToBitboard(binary);
-                    break;
-                case "b": BB+=convertStringToBitboard(binary);
-                    break;
-                case "r": BR+=convertStringToBitboard(binary);
-                    break;
-                case "q": BQ+=convertStringToBitboard(binary);
-                    break;
-                case "k": BK+=convertStringToBitboard(binary);
-                    break;
+            switch (mailbox[i / 8][i % 8]) {
+                case "P" -> WP += convertStringToBitboard(binary);
+                case "N" -> WN += convertStringToBitboard(binary);
+                case "B" -> WB += convertStringToBitboard(binary);
+                case "R" -> WR += convertStringToBitboard(binary);
+                case "Q" -> WQ += convertStringToBitboard(binary);
+                case "K" -> WK += convertStringToBitboard(binary);
+                case "p" -> BP += convertStringToBitboard(binary);
+                case "n" -> BN += convertStringToBitboard(binary);
+                case "b" -> BB += convertStringToBitboard(binary);
+                case "r" -> BR += convertStringToBitboard(binary);
+                case "q" -> BQ += convertStringToBitboard(binary);
+                case "k" -> BK += convertStringToBitboard(binary);
             }
         }
     }
@@ -225,7 +218,7 @@ public class Board {
         updateBoard();
     }
     public void drawBitboard() {
-        String chessBoard[][]=new String[8][8];
+        String[][] chessBoard = new String[8][8];
         for (int i=0;i<64;i++) {
             chessBoard[i/8][i%8]=" ";
         }

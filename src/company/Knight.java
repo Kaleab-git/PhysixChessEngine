@@ -9,7 +9,7 @@ public class Knight extends Piece {
 
     public Knight(boolean isWhite) {
         this.isWhite = isWhite;
-        if (isWhite == true) {
+        if (isWhite) {
             this.pieceType = "N";
         }
         else {
@@ -42,8 +42,43 @@ public class Knight extends Piece {
 
     @Override
     public ArrayList getMoves(Board board) {
-        long knightMoves;
+        ArrayList<Move> moves = new ArrayList<>();
 
-        return null;
+        long knightPositions;
+        if (this.isWhite) {
+            knightPositions = board.WN;
+        }
+        else {
+            knightPositions = board.BN;
+        }
+        for (int i = Long.numberOfTrailingZeros(knightPositions);i < 64-Long.numberOfLeadingZeros(knightPositions); i++) {
+            if (((knightPositions>>i)&1) == 1){
+                long knightMovesBoard;
+//                avoid capturing your own piece
+                long notMyPieces;
+                if (this.isWhite) {
+                    notMyPieces = ~board.WHITE_PIECES;
+                }
+                else {
+                    notMyPieces = ~board.BLACK_PIECES;
+                }
+//                We're not shifting in a single direction.
+                if (i > 18) {
+                    knightMovesBoard = Board.KNIGHT_SPAN<<(i-18);
+                }
+                else {
+                    knightMovesBoard = Board.KNIGHT_SPAN>>(18-i);
+                }
+//                Because we're not always shifting to in the same direction, the unreachable files can't be predicted
+                if (i%8 < 4) {
+                    knightMovesBoard &= ~Board.FILE_GH&notMyPieces;
+                }
+                else {
+                    knightMovesBoard &= ~Board.FILE_AB&notMyPieces;
+                }
+                Board.drawFromBitboard(knightMovesBoard);
+            }
+        }
+        return moves;
     }
 }
