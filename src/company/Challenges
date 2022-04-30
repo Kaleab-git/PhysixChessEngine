@@ -1,0 +1,6 @@
+Moving pieces
+    ->
+Iterating through bits
+    -> Went from 0-64 -> leadign-trailing -> jumping exactly to where we have 1s
+    -> O(64) -> O(64 - T - L) -> O(n)
+    -> T: trailing zeros L: leading zeros n: number of ones
