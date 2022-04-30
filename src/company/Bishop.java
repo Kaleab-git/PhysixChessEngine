@@ -9,7 +9,7 @@ public class Bishop extends Piece{
 
     public Bishop(Boolean isWhite) {
         this.isWhite = isWhite;
-        if (isWhite == true) {
+        if (isWhite) {
             this.pieceType = "B";
         }
         else {
@@ -47,7 +47,6 @@ public class Bishop extends Piece{
         for (int i = Long.numberOfTrailingZeros(bishopPosition);i < 64-Long.numberOfLeadingZeros(bishopPosition); i++) {
             if (((bishopPosition>>i)&1) == 1){
                 long bishopMovesBoard = DAndAntiDMoves(i, board);
-                Board.drawFromBitboard(bishopMovesBoard);
                 for (int j = Long.numberOfTrailingZeros(bishopMovesBoard);j < 64-Long.numberOfLeadingZeros(bishopMovesBoard); j++) {
                     if (((bishopMovesBoard>>j)&1) == 1) {
                         moves.add(new Move(i, j));
@@ -63,7 +62,7 @@ public class Bishop extends Piece{
         long possibilitiesDiagonal = ((board.OCCUPIED&Board.DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * Long.reverse(binaryS)));
         long possibilitiesAntiDiagonal = ((board.OCCUPIED&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(binaryS)));
         long possibilities = (possibilitiesDiagonal&Board.DiagonalMasks8[(s / 8) + (s % 8)]) | (possibilitiesAntiDiagonal&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]);
-        if (this.isWhite == true) {
+        if (this.isWhite) {
             possibilities &= board.NOT_WHITE_PIECES;
         }
         else {

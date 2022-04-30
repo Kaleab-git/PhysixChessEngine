@@ -3,17 +3,17 @@ package company;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Knight extends Piece {
+public class King extends Piece{
     private boolean isWhite;
     private String pieceType;
 
-    public Knight(boolean isWhite) {
+    public King(boolean isWhite) {
         this.isWhite = isWhite;
         if (isWhite) {
-            this.pieceType = "N";
+            this.pieceType = "K";
         }
         else {
-            this.pieceType = "n";
+            this.pieceType = "k";
         }
     }
 
@@ -22,10 +22,10 @@ public class Knight extends Piece {
         String[][] bitboardArray =  new String[8][8];
         long piece;
         if (this.isWhite) {
-            piece = board.WN;
+            piece = board.WK;
         }
         else {
-            piece = board.BN;
+            piece = board.BK;
         }
         for (int i=0; i<64; i++){
             if (((piece>>i)&1) == 1){
@@ -44,16 +44,16 @@ public class Knight extends Piece {
     public ArrayList getMoves(Board board) {
         ArrayList<Move> moves = new ArrayList<>();
 
-        long knightPositions;
+        long kingPositions;
         if (this.isWhite) {
-            knightPositions = board.WN;
+            kingPositions = board.WK;
         }
         else {
-            knightPositions = board.BN;
+            kingPositions = board.BK;
         }
-        for (int i = Long.numberOfTrailingZeros(knightPositions);i < 64-Long.numberOfLeadingZeros(knightPositions); i++) {
-            if (((knightPositions>>i)&1) == 1){
-                long knightMovesBoard;
+        for (int i = Long.numberOfTrailingZeros(kingPositions);i < 64-Long.numberOfLeadingZeros(kingPositions); i++) {
+            if (((kingPositions>>i)&1) == 1){
+                long kingMovesBoard;
 //                avoid capturing your own piece
                 long notMyPieces;
                 if (this.isWhite) {
@@ -64,20 +64,20 @@ public class Knight extends Piece {
                 }
 //                We're not shifting in a single direction.
                 if (i > 18) {
-                    knightMovesBoard = Board.KNIGHT_SPAN<<(i-18);
+                    kingMovesBoard = Board.KING_SPAN<<(i-9);
                 }
                 else {
-                    knightMovesBoard = Board.KNIGHT_SPAN>>(18-i);
+                    kingMovesBoard = Board.KING_SPAN>>(9-i);
                 }
 //                Because we're not always shifting to in the same direction, the unreachable files can't be predicted
                 if (i%8 < 4) {
-                    knightMovesBoard &= ~Board.FILE_GH&notMyPieces;
+                    kingMovesBoard &= ~Board.FILE_GH&notMyPieces;
                 }
                 else {
-                    knightMovesBoard &= ~Board.FILE_AB&notMyPieces;
+                    kingMovesBoard &= ~Board.FILE_AB&notMyPieces;
                 }
-                for (int j = Long.numberOfTrailingZeros(knightMovesBoard);j < 64-Long.numberOfLeadingZeros(knightMovesBoard); j++) {
-                    if (((knightMovesBoard>>j)&1) == 1) {
+                for (int j = Long.numberOfTrailingZeros(kingMovesBoard);j < 64-Long.numberOfLeadingZeros(kingMovesBoard); j++) {
+                    if (((kingMovesBoard>>j)&1) == 1) {
                         moves.add(new Move(i, j));
                     }
                 }
