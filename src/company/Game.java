@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Game {
     public String[] history;
     private boolean whiteTurn = true;
-    private boolean computerWhite = true;
+    private boolean computerWhite = false;
 
     public Game() {}
 
@@ -31,7 +31,8 @@ public class Game {
             else {
                 System.out.println("User's turn: ");
                 String playerMove = input.nextLine();
-                mainBoard.movePiece(new Move(playerMove));
+                Move move = new Move(playerMove);
+                mainBoard.movePiece(move);
             }
             mainBoard.drawBitboard();
             whiteTurn = !whiteTurn;

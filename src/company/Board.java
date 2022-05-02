@@ -1,10 +1,12 @@
 package company;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
     public long WP=0L, WN=0L, WB=0L, WR=0L, WQ=0L, WK=0L, BP=0L, BN=0L, BB=0L, BR=0L, BQ=0L, BK=0L;
     public long PrevWP=0L, PrevWN=0L, PrevWB=0L, PrevWR=0L, PrevWQ=0L, PrevWK=0L, PrevBP=0L, PrevBN=0L, PrevBB=0L, PrevBR=0L, PrevBQ=0L, PrevBK=0L;
+    public ArrayList<Move> history = new ArrayList<>();
     static long FILE_A=72340172838076673L;
     static long FILE_H=-9187201950435737472L;
     static long FILE_AB=217020518514230019L;
@@ -55,15 +57,15 @@ public class Board {
 //            {"P","P","P","P","P","P","P","P"},
 //            {"R","N","B","Q","K","B","N","R"}};
 
-    private static String mailbox[][] = {
-            {"r","n","b","q","k"," ","n","r"},
+    private static String[][] mailbox = {
+            {"r","n","b","q","k","b","n","r"},
+            {"p","p","p","p","p","p","p","p"},
             {" "," "," "," "," "," "," "," "},
-            {"B"," "," "," ","N"," "," "," "},
-            {" "," "," ","r"," ","K","b"," "},
-            {"q"," ","B","K","R"," ","N"," "},
-            {" ","R","N"," "," "," "," "," "},
-            {" ","p"," ","p","b","P"," "," "},
-            {"k"," ","B","B","B"," "," "," "}};
+            {" "," "," "," "," "," "," "," "},
+            {" "," "," ","p"," ","p"," "," "},
+            {" "," "," ","P"," "," "," "," "},
+            {"P","P","P"," ","P","P","P","P"},
+            {"R","N","B","Q","K","B","N","R"}};
 
 
     public Board(long WP, long WN, long WB, long WR, long WQ, long WK, long BP, long BN, long BB, long BR, long BQ, long BK) {
@@ -85,6 +87,7 @@ public class Board {
     }
 
     public Board() {
+        history.add(new Move("f7,f5"));
         this.updateBitboards();
         this.updateBoard();
     }
@@ -155,6 +158,8 @@ public class Board {
         PrevBR = BR;
         PrevBQ = BQ;
         PrevBK = BK;
+
+        history.add(move);
 //        Remove the piece from start position and place it at destination. Remove any piece at the destination
         if (((WP>>move.startIndex)&1)==1) {
             WP &= (~(long) Math.pow(2, move.startIndex));
@@ -294,5 +299,6 @@ public class Board {
         BQ = PrevBQ;
         BK = PrevBK;
         this.updateBoard();
+        history.remove(history.size()-1);
     }
 }

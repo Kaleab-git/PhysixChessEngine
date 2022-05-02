@@ -23,11 +23,8 @@ public class Agent {
 
     public void makeMove(Board board) {
         ArrayList<Move> legalMoves = new ArrayList<>();
-        board.movePiece(new Move("e1,e8"));
-        board.drawBitboard();
-        board.unmakeMove();
-        board.drawBitboard();
-//        legalMoves.addAll(pawn.getMoves(board));
+
+        legalMoves.addAll(pawn.getMoves(board));
 //        legalMoves.addAll(rook.getMoves(board));
 //        legalMoves.addAll(king.getMoves(board));
 //        legalMoves.addAll(queen.getMoves(board));

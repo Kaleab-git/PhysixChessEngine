@@ -1,5 +1,6 @@
 package company;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -77,7 +78,32 @@ public class Pawn extends Piece{
                 pawnMoves.add(move);
             }
         }
-
+//        En Passant
+        if (board.history.size() > 0) {
+            Move lastMove = board.history.get(board.history.size()-1);
+            if (this.isWhite) {
+//           Since I'm white last move must've been black's. Check if last move was 2 square step and if it was made by a pawn
+//           &ing board.BP with rank5 isn't necessary. If it was a 2 square move and if it was made by a pawn, we know that piece couldn't be anywhere but rank5
+                if (lastMove.destinationIndex - lastMove.startIndex == 16 & (((board.BP&Board.RANK_5)>>lastMove.destinationIndex)&1) == 1) {
+                    if (((board.WP>>lastMove.destinationIndex-1)&1) == 1) {
+                        pawnMoves.add(new Move(lastMove.destinationIndex-1, lastMove.destinationIndex-8));
+                    }
+                    if (((board.WP>>lastMove.destinationIndex+1)&1) == 1) {
+                        pawnMoves.add(new Move(lastMove.destinationIndex+1, lastMove.destinationIndex-8));
+                    }
+                }
+            }
+            else {
+                if (lastMove.startIndex - lastMove.destinationIndex == 16 & (((board.WP&Board.RANK_4)>>lastMove.destinationIndex)&1) == 1) {
+                    if (((board.BP>>(lastMove.destinationIndex-1))&1) == 1) {
+                        pawnMoves.add(new Move(lastMove.destinationIndex-1, lastMove.destinationIndex+8));
+                    }
+                    if (((board.BP>>(lastMove.destinationIndex+1))&1) == 1) {
+                        pawnMoves.add(new Move(lastMove.destinationIndex+1, lastMove.destinationIndex+8));
+                    }
+                }
+            }
+        }
         return pawnMoves;
     }
 
