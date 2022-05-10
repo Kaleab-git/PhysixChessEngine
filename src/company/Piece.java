@@ -8,6 +8,4 @@ public abstract class Piece {
 
     public abstract void drawBitBoard(Board board);
 
-    public abstract ArrayList getMoves(Board board);
-
 }

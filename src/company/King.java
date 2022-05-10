@@ -3,49 +3,13 @@ package company;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class King extends Piece{
-    private boolean isWhite;
-    private String pieceType;
-
-    public King(boolean isWhite) {
-        this.isWhite = isWhite;
-        if (isWhite) {
-            this.pieceType = "K";
-        }
-        else {
-            this.pieceType = "k";
-        }
-    }
-
-    @Override
-    public void drawBitBoard(Board board) {
-        String[][] bitboardArray =  new String[8][8];
-        long piece;
-        if (this.isWhite) {
-            piece = board.WK;
-        }
-        else {
-            piece = board.BK;
-        }
-        for (int i=0; i<64; i++){
-            if (((piece>>i)&1) == 1){
-                bitboardArray[i/8][i%8] = pieceType;
-            }
-            else{
-                bitboardArray[i/8][i%8] = " ";
-            }
-        }
-        for (int i=0; i<8; i++) {
-            System.out.println(Arrays.toString(bitboardArray[i]));
-        }
-    }
-
-    @Override
-    public ArrayList getMoves(Board board) {
-        ArrayList<Move> moves = new ArrayList<>();
+public class King {
+    public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
+        long bitboard = 0L;
+        ArrayList moves = new ArrayList();
 
         long kingPositions;
-        if (this.isWhite) {
+        if (isWhite) {
             kingPositions = board.WK;
         }
         else {
@@ -56,7 +20,7 @@ public class King extends Piece{
                 long kingMovesBoard;
 //                avoid capturing your own piece
                 long notMyPieces;
-                if (this.isWhite) {
+                if (isWhite) {
                     notMyPieces = ~board.WHITE_PIECES;
                 }
                 else {
@@ -76,12 +40,24 @@ public class King extends Piece{
                 else {
                     kingMovesBoard &= ~Board.FILE_AB&notMyPieces;
                 }
+
+                long enemyAttacks = 0L;
+//                enemyAttacks |= (long) King.getMoves(board, true).get(0);
+//                enemyAttacks |= (long) Rook.getMoves(board, true).get(0);
+//                enemyAttacks |= (long) Bishop.getMoves(board, true).get(0);
+//                enemyAttacks |= (long) Knight.getMoves(board, true).get(0);
+//                enemyAttacks |= (long) Queen.getMoves(board, true).get(0);
+                enemyAttacks |= (long) Pawn.getMoves(board, true, true).get(0);
+                bitboard |= kingMovesBoard;
                 for (int j = Long.numberOfTrailingZeros(kingMovesBoard);j < 64-Long.numberOfLeadingZeros(kingMovesBoard); j++) {
                     if (((kingMovesBoard>>j)&1) == 1) {
                         moves.add(new Move(i, j));
                     }
                 }
             }
+        }
+        if (inBitboard){
+            return new ArrayList(Arrays.asList(bitboard));
         }
         return moves;
     }

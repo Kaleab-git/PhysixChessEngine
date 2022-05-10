@@ -3,60 +3,25 @@ package company;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Knight extends Piece {
-    private boolean isWhite;
-    private String pieceType;
-
-    public Knight(boolean isWhite) {
-        this.isWhite = isWhite;
-        if (isWhite) {
-            this.pieceType = "N";
-        }
-        else {
-            this.pieceType = "n";
-        }
-    }
-
-    @Override
-    public void drawBitBoard(Board board) {
-        String[][] bitboardArray =  new String[8][8];
-        long piece;
-        if (this.isWhite) {
-            piece = board.WN;
-        }
-        else {
-            piece = board.BN;
-        }
-        for (int i=0; i<64; i++){
-            if (((piece>>i)&1) == 1){
-                bitboardArray[i/8][i%8] = pieceType;
-            }
-            else{
-                bitboardArray[i/8][i%8] = " ";
-            }
-        }
-        for (int i=0; i<8; i++) {
-            System.out.println(Arrays.toString(bitboardArray[i]));
-        }
-    }
-
-    @Override
-    public ArrayList getMoves(Board board) {
+public class Knight {
+    public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
+        long bitboard = 0L;
         ArrayList<Move> moves = new ArrayList<>();
 
         long knightPositions;
-        if (this.isWhite) {
+        if (isWhite) {
             knightPositions = board.WN;
         }
         else {
             knightPositions = board.BN;
         }
+
         for (int i = Long.numberOfTrailingZeros(knightPositions);i < 64-Long.numberOfLeadingZeros(knightPositions); i++) {
             if (((knightPositions>>i)&1) == 1){
                 long knightMovesBoard;
 //                avoid capturing your own piece
                 long notMyPieces;
-                if (this.isWhite) {
+                if (isWhite) {
                     notMyPieces = ~board.WHITE_PIECES;
                 }
                 else {
@@ -76,12 +41,17 @@ public class Knight extends Piece {
                 else {
                     knightMovesBoard &= ~Board.FILE_AB&notMyPieces;
                 }
+
+                bitboard |= knightMovesBoard;
                 for (int j = Long.numberOfTrailingZeros(knightMovesBoard);j < 64-Long.numberOfLeadingZeros(knightMovesBoard); j++) {
                     if (((knightMovesBoard>>j)&1) == 1) {
                         moves.add(new Move(i, j));
                     }
                 }
             }
+        }
+        if (inBitboard) {
+            return new ArrayList(Arrays.asList(bitboard));
         }
         return moves;
     }
