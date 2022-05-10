@@ -13,23 +13,28 @@ public class Agent {
 
     public Agent(boolean computerWhite) {
         this.isWhite = computerWhite;
-        this.pawn = new Pawn(this.isWhite);
-        this.rook = new Rook(this.isWhite);
-        this.king = new King(this.isWhite);
-        this.queen = new Queen(this.isWhite);
-        this.knight = new Knight(this.isWhite);
-        this.bishop = new Bishop(this.isWhite);
     }
 
     public void makeMove(Board board) {
         ArrayList<Move> legalMoves = new ArrayList<>();
 
-        legalMoves.addAll(pawn.getMoves(board));
-//        legalMoves.addAll(rook.getMoves(board));
-//        legalMoves.addAll(king.getMoves(board));
-//        legalMoves.addAll(queen.getMoves(board));
-//        legalMoves.addAll(knight.getMoves(board));
-//        legalMoves.addAll(bishop.getMoves(board));
+//        legalMoves.addAll(Pawn.getMoves(board, false, isWhite));
+//        legalMoves.addAll(Rook.getMoves(board, false, isWhite));
+//        legalMoves.addAll(King.getMoves(board, false, isWhite));
+//        legalMoves.addAll(Queen.getMoves(board, false, isWhite));
+//        legalMoves.addAll(Knight.getMoves(board, false, isWhite));
+        legalMoves.addAll(Bishop.getMoves(board, false, isWhite));
+        long whiteAttacks = 0L;
+
+        whiteAttacks |= (long) Pawn.getMoves(board, true, isWhite).get(0);
+//        whiteAttacks |= (long) king.getMoves(board, true).get(0);
+//        whiteAttacks |= (long) rook.getMoves(board, true).get(0);
+//        whiteAttacks |= (long) bishop.getMoves(board, true).get(0);
+//        whiteAttacks |= (long) knight.getMoves(board, true).get(0);
+//        whiteAttacks |= (long) queen.getMoves(board, true).get(0);
+        Board.drawFromBitboard(whiteAttacks);
+
+
         for (Move move:legalMoves){
             System.out.println(move.moveNotation);
         }
