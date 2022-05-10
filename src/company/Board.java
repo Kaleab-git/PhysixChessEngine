@@ -1,12 +1,12 @@
 package company;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Arrays;
 
 public class Board {
     public long WP=0L, WN=0L, WB=0L, WR=0L, WQ=0L, WK=0L, BP=0L, BN=0L, BB=0L, BR=0L, BQ=0L, BK=0L;
     public long PrevWP=0L, PrevWN=0L, PrevWB=0L, PrevWR=0L, PrevWQ=0L, PrevWK=0L, PrevBP=0L, PrevBN=0L, PrevBB=0L, PrevBR=0L, PrevBQ=0L, PrevBK=0L;
-    public ArrayList<Move> history = new ArrayList<>();
+    public LinkedList<Move> history = new LinkedList<Move>();
     static long FILE_A=72340172838076673L;
     static long FILE_H=-9187201950435737472L;
     static long FILE_AB=217020518514230019L;
@@ -26,6 +26,7 @@ public class Board {
     long BLACK_PIECES;
     long OCCUPIED;
     long EMPTY;
+
     static long[] RankMasks8 =/*from rank1 to rank8*/
             {
                     0xFFL, 0xFF00L, 0xFF0000L, 0xFF000000L, 0xFF00000000L, 0xFF0000000000L, 0xFF000000000000L, 0xFF00000000000000L
@@ -62,9 +63,9 @@ public class Board {
             {"p","p","p","p","p","p","p","p"},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
-            {" "," "," ","p"," ","p"," "," "},
             {" "," "," ","P"," "," "," "," "},
-            {"P","P","P"," ","P","P","P","P"},
+            {" "," "," "," "," "," "," "," "},
+            {"P","P","P"," "," "," "," "," "},
             {"R","N","B","Q","K","B","N","R"}};
 
 
@@ -159,79 +160,99 @@ public class Board {
         PrevBQ = BQ;
         PrevBK = BK;
 
+        if (history.size() > 50) {
+            history.removeFirst();
+        }
         history.add(move);
+
 //        Remove the piece from start position and place it at destination. Remove any piece at the destination
-        if (((WP>>move.startIndex)&1)==1) {
-            WP &= (~(long) Math.pow(2, move.startIndex));
-            WP |= (long) Math.pow(2, move.destinationIndex);
-        }
-        else {WP &= (~(long) Math.pow(2, move.destinationIndex));}
+        long startNumber;
+        long destinationNumber;
 
-        if (((WN>>move.startIndex)&1)==1) {
-            WN &= (~(long) Math.pow(2, move.startIndex));
-            WN |= (long) Math.pow(2, move.destinationIndex);
+        if (move.startIndex < 63) {
+            startNumber = (~(long) Math.pow(2, move.startIndex));
         }
-        else {WN &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {
+            startNumber = (9223372036854775807L);
+        }
+        if (move.destinationIndex < 63) {
+            destinationNumber = (long) Math.pow(2, move.destinationIndex);
+        }
+        else {
+            destinationNumber = -9223372036854775808L;
+        }
 
-        if (((WB>>move.startIndex)&1)==1) {
-            WB &= (~(long) Math.pow(2, move.startIndex));
-            WB |= (long) Math.pow(2, move.destinationIndex);
+        if (((WP>>>move.startIndex)&1)==1) {
+            WP &= startNumber;
+            WP |= destinationNumber;
         }
-        else {WB &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {WP &= (~destinationNumber);}
 
-        if (((WR>>move.startIndex)&1)==1) {
-            WR &= (~(long) Math.pow(2, move.startIndex));
-            WR |= (long) Math.pow(2, move.destinationIndex);
+        if (((WN>>>move.startIndex)&1)==1) {
+            WN &= startNumber;
+            WN |= destinationNumber;
         }
-        else {WR &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {WN &= (~destinationNumber);}
 
-        if (((WQ>>move.startIndex)&1)==1) {
-            WQ &= (~(long) Math.pow(2, move.startIndex));
-            WQ |= (long) Math.pow(2, move.destinationIndex);
+        if (((WB>>>move.startIndex)&1)==1) {
+            WB &= startNumber;
+            WB |= destinationNumber;
         }
-        else {WQ &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {WB &= (~destinationNumber);}
 
-        if (((WK>>move.startIndex)&1)==1) {
-            WK &= (~(long) Math.pow(2, move.startIndex));
-            WK |= (long) Math.pow(2, move.destinationIndex);
+        if (((WR>>>move.startIndex)&1)==1) {
+            WR &= startNumber;
+            WR |= destinationNumber;
         }
-        else {WK &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {WR &= (~destinationNumber);}
 
-        if (((BP>>move.startIndex)&1)==1) {
-            BP &= (~(long) Math.pow(2, move.startIndex));
-            BP |= (long) Math.pow(2, move.destinationIndex);
+        if (((WQ>>>move.startIndex)&1)==1) {
+            WQ &= startNumber;
+            WQ |= destinationNumber;
         }
-        else {BP &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {WQ &= (~destinationNumber);}
 
-        if (((BN>>move.startIndex)&1)==1) {
-            BN &= (~(long) Math.pow(2, move.startIndex));
-            BN |= (long) Math.pow(2, move.destinationIndex);
+        if (((WK>>>move.startIndex)&1)==1) {
+            WK &= startNumber;
+            WK |= destinationNumber;
         }
-        else {BN &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {WK &= (~destinationNumber);}
 
-        if (((BB>>move.startIndex)&1)==1) {
-            BB &= (~(long) Math.pow(2, move.startIndex));
-            BB |= (long) Math.pow(2, move.destinationIndex);
+        if (((BP>>>move.startIndex)&1)==1) {
+            BP &= startNumber;
+            BP |= destinationNumber;
         }
-        else {BB &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {BP &= (~destinationNumber);}
 
-        if (((BR>>move.startIndex)&1)==1) {
-            BR &= (~(long) Math.pow(2, move.startIndex));
-            BR |= (long) Math.pow(2, move.destinationIndex);
+        if (((BN>>>move.startIndex)&1)==1) {
+            BN &= startNumber;
+            BN |= destinationNumber;
         }
-        else {BR &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {BN &= (~destinationNumber);}
 
-        if (((BQ>>move.startIndex)&1)==1) {
-            BQ &= (~(long) Math.pow(2, move.startIndex));
-            BQ |= (long) Math.pow(2, move.destinationIndex);
+        if (((BB>>>move.startIndex)&1)==1) {
+            BB &= startNumber;
+            BB |= destinationNumber;
         }
-        else {BQ &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {BB &= (~destinationNumber);}
 
-        if (((BK>>move.startIndex)&1)==1) {
-            BK &= (~(long) Math.pow(2, move.startIndex));
-            BK |= (long) Math.pow(2, move.destinationIndex);
+        if (((BR>>>move.startIndex)&1)==1) {
+            BR &= startNumber;
+            BR |= destinationNumber;
         }
-        else {BK &= (~(long) Math.pow(2, move.destinationIndex));}
+        else {BR &= (~destinationNumber);}
+
+        if (((BQ>>>move.startIndex)&1)==1) {
+            BQ &= startNumber;
+            BQ |= destinationNumber;
+        }
+        else {BQ &= (~destinationNumber);}
+
+        if (((BK>>>move.startIndex)&1)==1) {
+            BK &= startNumber;
+            BK |= destinationNumber;
+        }
+        else {BK &= (~destinationNumber);}
 
         updateBoard();
     }
@@ -283,6 +304,7 @@ public class Board {
         OCCUPIED = (WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK);
         EMPTY =~ OCCUPIED;
         WHITE_PIECES = (WP|WN|WB|WR|WQ|WK|BK);
+
     }
 
     public void unmakeMove() {
