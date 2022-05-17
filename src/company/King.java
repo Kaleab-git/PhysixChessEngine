@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class King {
-    public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
+    public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite, boolean reconnaissanceCall) {
         long bitboard = 0L;
         ArrayList moves = new ArrayList();
 
@@ -27,13 +27,16 @@ public class King {
                     notMyPieces = ~board.BLACK_PIECES;
                 }
 //                We're not shifting in a single direction.
-                if (i > 18) {
+                if (i > 9) {
                     kingMovesBoard = Board.KING_SPAN<<(i-9);
                 }
                 else {
-                    kingMovesBoard = Board.KING_SPAN>>(9-i);
+                    System.out.println("Here");
+                    Board.drawFromBitboard(Board.KING_SPAN);
+                    Board.drawFromBitboard(Board.KING_SPAN>>>(9-i));
+                    kingMovesBoard = Board.KING_SPAN>>>(9-i);
                 }
-//                Because we're not always shifting to in the same direction, the unreachable files can't be predicted
+//                Because we're not always shifting in the same direction, what files are unreachable can't be predicted
                 if (i%8 < 4) {
                     kingMovesBoard &= ~Board.FILE_GH&notMyPieces;
                 }
@@ -41,13 +44,20 @@ public class King {
                     kingMovesBoard &= ~Board.FILE_AB&notMyPieces;
                 }
 
-                long enemyAttacks = 0L;
-//                enemyAttacks |= (long) King.getMoves(board, true).get(0);
-//                enemyAttacks |= (long) Rook.getMoves(board, true).get(0);
-//                enemyAttacks |= (long) Bishop.getMoves(board, true).get(0);
-//                enemyAttacks |= (long) Knight.getMoves(board, true).get(0);
-//                enemyAttacks |= (long) Queen.getMoves(board, true).get(0);
-                enemyAttacks |= (long) Pawn.getMoves(board, true, true).get(0);
+//                A king called on for reconnaissance should avoid calling reconnaissance on his opponents.
+//                1. Inorder to avoid infinitely calling on eachother
+//                2. Just because enemy king can't move to a square because original piece is attacking that square, it does not mean that enemy king is not attacking that square
+//                   Original king can't move to an attacked cell thinking that it has got its own piece to defend it
+                if (!reconnaissanceCall) {
+                    long enemyAttacks = 0L;
+                    enemyAttacks |= (long) Pawn.getMoves(board, true, !isWhite).get(0);
+                    enemyAttacks |= (long) Rook.getMoves(board, true, !isWhite).get(0);
+                    enemyAttacks |= (long) Bishop.getMoves(board, true, !isWhite).get(0);
+                    enemyAttacks |= (long) Knight.getMoves(board, true, !isWhite).get(0);
+                    enemyAttacks |= (long) Queen.getMoves(board, true, !isWhite).get(0);
+                    enemyAttacks |= (long) King.getMoves(board, true, !isWhite, true).get(0);
+                    kingMovesBoard &= (~enemyAttacks);
+                }
                 bitboard |= kingMovesBoard;
                 for (int j = Long.numberOfTrailingZeros(kingMovesBoard);j < 64-Long.numberOfLeadingZeros(kingMovesBoard); j++) {
                     if (((kingMovesBoard>>j)&1) == 1) {
@@ -57,6 +67,7 @@ public class King {
             }
         }
         if (inBitboard){
+            Board.drawFromBitboard(bitboard);
             return new ArrayList(Arrays.asList(bitboard));
         }
         return moves;
