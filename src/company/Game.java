@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Game {
     public String[] history;
     private boolean whiteTurn = true;
-    private boolean computerWhite = false;
+    private boolean computerWhite = true;
 
     public Game() {}
 
@@ -16,10 +16,21 @@ public class Game {
     public boolean checkMate() {return false;}
 
     public void play() {
+        Move move1 = new Move(0, 63);
+        System.out.println(move1.moveNotation);
         Agent agent = new Agent(computerWhite);
         Scanner input = new Scanner(System.in);
 //        Setup bitboards to starting position described by mailbox
         Board mainBoard = new Board();
+        Board emptyBoard = new Board(0L,0L,0L,0L,0L,0L,0L,0L,0L,0L,0L,0L);
+
+//        Precompute Attack Table for each piece using an empty board
+        Rook.loadTable(emptyBoard);
+        Pawn.loadTable(emptyBoard);
+        Queen.loadTable(emptyBoard);
+        Knight.loadTable(emptyBoard);
+        Bishop.loadTable(emptyBoard);
+
         mainBoard.updateBitboards();
         mainBoard.drawBitboard();
         while (true) {
@@ -37,5 +48,12 @@ public class Game {
             mainBoard.drawBitboard();
             whiteTurn = !whiteTurn;
         }
+    }
+
+//     Returns true if player who's turn it is is in check
+    private boolean inCheck(boolean whiteTurn, Board board) {
+        long kingPosition = whiteTurn ? board.WK : board.BK;
+        boolean pawnAttacksKing;
+        return true;
     }
 }
