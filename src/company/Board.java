@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.Arrays;
 
 public class Board {
+    public LinkedList<Move> history = new LinkedList<Move>();
     public long WP=0L, WN=0L, WB=0L, WR=0L, WQ=0L, WK=0L, BP=0L, BN=0L, BB=0L, BR=0L, BQ=0L, BK=0L;
     public long PrevWP=0L, PrevWN=0L, PrevWB=0L, PrevWR=0L, PrevWQ=0L, PrevWK=0L, PrevBP=0L, PrevBN=0L, PrevBB=0L, PrevBR=0L, PrevBQ=0L, PrevBK=0L;
-    public LinkedList<Move> history = new LinkedList<Move>();
     static long FILE_A=72340172838076673L;
     static long FILE_H=-9187201950435737472L;
     static long FILE_AB=217020518514230019L;
@@ -21,11 +21,10 @@ public class Board {
     static long QUEEN_SIDE=1085102592571150095L;
     static long KING_SPAN=460039L;
     static long KNIGHT_SPAN=43234889994L;
-    long NOT_WHITE_PIECES;
-    long WHITE_PIECES;
-    long BLACK_PIECES;
-    long OCCUPIED;
-    long EMPTY;
+    long WHITE_PIECES = 0L;
+    long BLACK_PIECES = 0L;
+    long OCCUPIED = 0L;
+    long EMPTY =~ OCCUPIED;
 
     static long[] RankMasks8 =/*from rank1 to rank8*/
             {
@@ -59,14 +58,14 @@ public class Board {
 //            {"R","N","B","Q","K","B","N","R"}};
 
     private static String[][] mailbox = {
-            {"r","n","b","q","k","b","n","r"},
-            {"p","p","p","p","p","p","p","p"},
+            {"r","n","b","q"," ","b","n","r"},
+            {"p","p","p","p","p","p","p"," "},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
-            {" "," "," ","P"," "," "," "," "},
+            {" "," "," "," ","K"," "," "," "},
             {" "," "," "," "," "," "," "," "},
-            {"P","P","P"," "," "," "," "," "},
-            {"R","N","B","Q","K","B","N","R"}};
+            {"P","P","P"," "," "," "," ","b"},
+            {"R","N","B","Q","n","B","N","R"}};
 
 
     public Board(long WP, long WN, long WB, long WR, long WQ, long WK, long BP, long BN, long BB, long BR, long BQ, long BK) {
@@ -83,17 +82,17 @@ public class Board {
         this.BQ = BQ;
         this.BK = BK;
 
-        this.updateBitboards();
+        this.updateMailbox();
         this.updateBoard();
     }
 
     public Board() {
-        history.add(new Move("f7,f5"));
         this.updateBitboards();
         this.updateBoard();
     }
 
-    public void updateBitboards() {
+    public void
+    updateBitboards() {
         String binary;
         WP=0L; WN=0L; WB=0L; WR=0L; WQ=0L; WK=0L; BP=0L; BN=0L; BB=0L; BR=0L; BQ=0L; BK=0L;
         for (int i=0; i<64; i++){
@@ -298,13 +297,10 @@ public class Board {
 
     private void updateBoard() {
         //added BK to avoid illegal capture
-        NOT_WHITE_PIECES =~ (WP|WN|WB|WR|WQ|WK|BK);
-        //omitted BK to avoid illegal capture
+        WHITE_PIECES = (WP|WN|WB|WR|WQ|WK|BK);
         BLACK_PIECES = (BP|BN|BB|BR|BQ|WK|BK);
         OCCUPIED = (WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK);
         EMPTY =~ OCCUPIED;
-        WHITE_PIECES = (WP|WN|WB|WR|WQ|WK|BK);
-
     }
 
     public void unmakeMove() {
