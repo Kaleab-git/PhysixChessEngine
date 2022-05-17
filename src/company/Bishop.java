@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Bishop {
+    public static long[] attacksTo = new long[64];
+
+    public static void loadTable(Board board) {
+        for (int i=0; i<64; i++) {
+            attacksTo[i] = DAndAntiDMoves(i, board, true);
+        }
+    }
 
     public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
         long bitboard = 0L;
@@ -40,7 +47,7 @@ public class Bishop {
         long possibilitiesAntiDiagonal = ((board.OCCUPIED&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(binaryS)));
         long possibilities = (possibilitiesDiagonal&Board.DiagonalMasks8[(s / 8) + (s % 8)]) | (possibilitiesAntiDiagonal&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]);
         if (isWhite) {
-            possibilities &= board.NOT_WHITE_PIECES;
+            possibilities &= ~board.WHITE_PIECES;
         }
         else {
             possibilities &= ~board.BLACK_PIECES;

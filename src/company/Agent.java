@@ -23,19 +23,9 @@ public class Agent {
 //        legalMoves.addAll(King.getMoves(board, false, isWhite));
 //        legalMoves.addAll(Queen.getMoves(board, false, isWhite));
 //        legalMoves.addAll(Knight.getMoves(board, false, isWhite));
-        legalMoves.addAll(Bishop.getMoves(board, false, isWhite));
-        long whiteAttacks = 0L;
-
-        whiteAttacks |= (long) Pawn.getMoves(board, true, isWhite).get(0);
-//        whiteAttacks |= (long) king.getMoves(board, true).get(0);
-//        whiteAttacks |= (long) rook.getMoves(board, true).get(0);
-//        whiteAttacks |= (long) bishop.getMoves(board, true).get(0);
-//        whiteAttacks |= (long) knight.getMoves(board, true).get(0);
-//        whiteAttacks |= (long) queen.getMoves(board, true).get(0);
-        Board.drawFromBitboard(whiteAttacks);
-
-
-        for (Move move:legalMoves){
+//        legalMoves.addAll(Bishop.getMoves(board, false, isWhite));
+        King.getMoves(board, true, isWhite, false);
+            for (Move move:legalMoves){
             System.out.println(move.moveNotation);
         }
     }

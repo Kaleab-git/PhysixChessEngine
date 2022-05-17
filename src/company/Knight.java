@@ -4,6 +4,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Knight {
+    public static long[] attacksTo = new long[64];
+
+    public static void loadTable(Board board) {
+        for (int i=0; i<64; i++) {
+            long knightMovesBoard;
+            if (i > 18) {
+                knightMovesBoard = Board.KNIGHT_SPAN<<(i-18);
+            }
+            else {
+                knightMovesBoard = Board.KNIGHT_SPAN>>(18-i);
+            }
+            if (i%8 < 4) {
+                knightMovesBoard &= ~Board.FILE_GH;
+            }
+            else {
+                knightMovesBoard &= ~Board.FILE_AB;
+            }
+            attacksTo[i] = knightMovesBoard;
+        }
+    }
     public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
         long bitboard = 0L;
         ArrayList<Move> moves = new ArrayList<>();

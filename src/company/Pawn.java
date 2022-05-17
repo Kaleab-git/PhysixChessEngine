@@ -1,11 +1,32 @@
 package company;
 
+import javax.sound.midi.Soundbank;
 import java.sql.Array;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Pawn {
+//    First 64 lenth array is attacksTo by white pawns. Second array is attacksTo by black pawns
+    public static long[][] attacksTo = new long[2][64];
+
+    public static void loadTable(Board board) {
+        long pawnPosition;
+        for (int i=0; i<64; i++) {
+            pawnPosition = (long) Math.pow(2, i);
+            if (i == 63) {
+                pawnPosition = (-9223372036854775808L);
+            }
+            attacksTo[0][i] = ((pawnPosition>>>7&~Board.FILE_A) | (pawnPosition>>>9&~Board.FILE_H));
+        }
+        for (int i=0; i<64; i++) {
+            pawnPosition = (long) Math.pow(2, i);
+            if (i == 63) {
+                pawnPosition = -9223372036854775808L;
+            }
+            attacksTo[1][i] = ((pawnPosition<<9&~Board.FILE_A) | (pawnPosition<<7&~Board.FILE_H));
+        }
+    }
 
     public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
         long bitboard = 0L;

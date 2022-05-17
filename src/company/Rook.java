@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Rook {
+    public static long[] attacksTo = new long[64];
+
+    public static void loadTable(Board board) {
+        for (int i=0; i<64; i++) {
+            attacksTo[i] = HandVMoves(i, board, true);
+        }
+    }
+
     public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
         long bitboard = 0L;
         ArrayList<Move> moves = new ArrayList<>();
@@ -39,7 +47,7 @@ public class Rook {
         long possibilitiesVertical = ((board.OCCUPIED&Board.FileMasks8[s % 8]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.FileMasks8[s % 8]) - (2 * Long.reverse(binaryS)));
         long possibilities = (possibilitiesHorizontal&Board.RankMasks8[s / 8]) | (possibilitiesVertical&Board.FileMasks8[s % 8]);
         if (isWhite == true) {
-            possibilities &= board.NOT_WHITE_PIECES;
+            possibilities &= ~board.WHITE_PIECES;
         }
         else {
             possibilities &= ~board.BLACK_PIECES;
