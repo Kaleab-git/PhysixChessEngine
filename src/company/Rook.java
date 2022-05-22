@@ -9,11 +9,12 @@ public class Rook {
 
     public static void loadTable(Board board) {
         for (int i=0; i<64; i++) {
-            attacksTo[i] = HandVMoves(i, board, true);
+            attacksTo[i] = HandVMoves(i, board, false,true);
         }
     }
 
     public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
+//        initializing bitboard to enemy kings position so as to consider even enemy kings position as a possible attack square
         long bitboard = 0L;
         ArrayList<Move> moves = new ArrayList<>();
 
@@ -25,12 +26,18 @@ public class Rook {
             rookPosition = board.BR;
         }
         for (int i = Long.numberOfTrailingZeros(rookPosition);i < 64-Long.numberOfLeadingZeros(rookPosition); i++) {
-            if (((rookPosition>>i)&1) == 1){
-                long rookMovesBoard = HandVMoves(i, board, isWhite);
-                bitboard |= rookMovesBoard;
-                for (int j = Long.numberOfTrailingZeros(rookMovesBoard);j < 64-Long.numberOfLeadingZeros(rookMovesBoard); j++) {
-                    if (((rookMovesBoard>>j)&1) == 1) {
-                        moves.add(new Move(i, j));
+//            if we're considering attacks only, 1) we just want the bitboard. We dont want to iterate through it. 2) we also dont want to remove friendly pieces form the board.
+            if (inBitboard) {
+                bitboard |= HandVMoves(i, board, true, isWhite);
+            }
+            else {
+                if (((rookPosition>>i)&1) == 1) {
+                    long enemyKing = isWhite ? board.BK:board.WK;
+                    long rookMovesBoard = HandVMoves(i, board, false, isWhite)&~enemyKing;
+                    for (int j = Long.numberOfTrailingZeros(rookMovesBoard);j < 64-Long.numberOfLeadingZeros(rookMovesBoard); j++) {
+                        if (((rookMovesBoard>>j)&1) == 1) {
+                            moves.add(new Move(i, j));
+                        }
                     }
                 }
             }
@@ -41,11 +48,14 @@ public class Rook {
         return moves;
     }
 
-    static long HandVMoves(int s, Board board, boolean isWhite) {
+    static long HandVMoves(int s, Board board, boolean inBitboard, boolean isWhite) {
         long binaryS=1L<<s;
         long possibilitiesHorizontal = (board.OCCUPIED - 2 * binaryS) ^ Long.reverse(Long.reverse(board.OCCUPIED) - 2 * Long.reverse(binaryS));
         long possibilitiesVertical = ((board.OCCUPIED&Board.FileMasks8[s % 8]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.FileMasks8[s % 8]) - (2 * Long.reverse(binaryS)));
         long possibilities = (possibilitiesHorizontal&Board.RankMasks8[s / 8]) | (possibilitiesVertical&Board.FileMasks8[s % 8]);
+        if (inBitboard) {
+            return possibilities;
+        }
         if (isWhite == true) {
             possibilities &= ~board.WHITE_PIECES;
         }
