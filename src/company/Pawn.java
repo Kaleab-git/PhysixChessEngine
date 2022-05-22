@@ -12,6 +12,7 @@ public class Pawn {
 
     public static void loadTable(Board board) {
         long pawnPosition;
+//        White pawn attack table
         for (int i=0; i<64; i++) {
             pawnPosition = (long) Math.pow(2, i);
             if (i == 63) {
@@ -19,6 +20,7 @@ public class Pawn {
             }
             attacksTo[0][i] = ((pawnPosition>>>7&~Board.FILE_A) | (pawnPosition>>>9&~Board.FILE_H));
         }
+//        Black pawns attack table
         for (int i=0; i<64; i++) {
             pawnPosition = (long) Math.pow(2, i);
             if (i == 63) {
@@ -29,6 +31,19 @@ public class Pawn {
     }
 
     public static ArrayList getMoves(Board board, boolean inBitboard, boolean isWhite) {
+//        TODO: Initialize generic variables early on like enemyPiece, enemyKing, myPiece, myKing, promotionRank, to avoid using '?' operator every 5 lines
+/*        TODO: Instead of initializing different variables like forwardMove, rightCapture, leftCapture, doubleForwardMove that you assign values to, use it rigth after,
+                but never look back to. Initialize one generic variables (pawnMoves for ex) and then reuse that variable for all the possible moves Because getMoves function
+                is going to be called a lot of times. And I'm not sure about how Garbage collection works in Java, or how much of an overhead it is.
+        long pawnMovesBitboard = 0L;
+        long myPieces = isWhite ? board.WHITE_PIECES:board.BLACK_PIECES;
+        long enemyPieces = isWhite ? board.BLACK_PIECES:board.WHITE_PIECES;
+        long myKing = isWhite ? board.WK:board.BK;
+        long promotionRank = isWhite ? Board.RANK_8:Board.RANK_1;
+
+* */
+
+//        initializing bitboard to enemy kings position so as to consider even enemy kings position as a possible attack square
         long bitboard = 0L;
         ArrayList<Move> pawnMoves = new ArrayList();
 
@@ -43,6 +58,8 @@ public class Pawn {
 //      Right Capture
         long rightCapture = isWhite ? ((board.WP>>>7)&board.BLACK_PIECES&~Board.RANK_8&~Board.FILE_A) : ((board.BP<<9)&board.WHITE_PIECES&~Board.RANK_1&~Board.FILE_A);
         bitboard |= isWhite ? ((board.WP>>>7)&~Board.RANK_8&~Board.FILE_A) : ((board.BP<<9)&~Board.RANK_1&~Board.FILE_A);
+//      Remove enemy king to avoid king capture. But after we've included all positions (even king's to bitboard)
+        rightCapture = isWhite ? rightCapture&~board.BK : rightCapture&~board.WK;
         for (int i = Long.numberOfTrailingZeros(rightCapture);i < 64-Long.numberOfLeadingZeros(rightCapture); i++){
             if (((rightCapture>>i) & 1) == 1) {
                 Move move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
@@ -52,6 +69,8 @@ public class Pawn {
 //      Left Capture
         long leftCapture = isWhite ? ((board.WP>>>9)&board.BLACK_PIECES&~Board.FILE_H&~Board.RANK_8) : ((board.BP<<7)&board.WHITE_PIECES&~Board.RANK_1&~Board.FILE_H);
         bitboard |= isWhite ? ((board.WP>>>9)&~Board.FILE_H&~Board.RANK_8) : ((board.BP<<7)&~Board.RANK_1&~Board.FILE_H);
+//      Remove enemy king to avoid king capture. But after we've included all positions (even king's to bitboard)
+        leftCapture = isWhite ? leftCapture&~board.BK : leftCapture&~board.WK;
         for (int i = Long.numberOfTrailingZeros(leftCapture);i < 64-Long.numberOfLeadingZeros(leftCapture); i++){
             if (((leftCapture>>i) & 1) == 1) {
                 Move move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
@@ -77,6 +96,7 @@ public class Pawn {
 //        Promotion by capturing to the right
         long rightPromotion = isWhite ? ((board.WP>>>7)&board.BLACK_PIECES&Board.RANK_8&~Board.FILE_A) : (((board.BP<<9)&board.WHITE_PIECES&Board.RANK_1&~Board.FILE_A));
         bitboard |= isWhite ? ((board.WP>>>7)&Board.RANK_8&~Board.FILE_A) : (((board.BP<<9)&Board.RANK_1&~Board.FILE_A));
+        rightPromotion = isWhite ? rightPromotion&~board.BK : rightPromotion&~board.WK;
         for (int i = Long.numberOfTrailingZeros(rightPromotion);i < 64-Long.numberOfLeadingZeros(rightPromotion); i++){
             if (((rightPromotion>>i) & 1) == 1) {
                 Move move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
@@ -86,6 +106,7 @@ public class Pawn {
 //        Promotion by capturing to the left
         long leftPromotion = isWhite ? ((board.WP>>>9)&board.BLACK_PIECES&Board.RANK_8&~Board.FILE_H) : ((board.BP<<7)&board.WHITE_PIECES&Board.RANK_1&~Board.FILE_H);
         bitboard |= isWhite ? ((board.WP>>>9)&Board.RANK_8&~Board.FILE_H) : ((board.BP<<7)&Board.RANK_1&~Board.FILE_H);
+        leftPromotion = isWhite ? leftPromotion&~board.BK : leftPromotion&~board.WK;
         for (int i = Long.numberOfTrailingZeros(leftPromotion);i < 64-Long.numberOfLeadingZeros(leftPromotion); i++){
             if (((leftPromotion>>i) & 1) == 1) {
                 Move move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
