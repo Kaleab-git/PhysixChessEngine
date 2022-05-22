@@ -9,9 +9,9 @@ Moving pieces
 Iterating through bits
     -> Went from 0-64 -> leadign-trailing -> jumping exactly to where we have 1s
     -> O(64) -> O(64 - T - L) -> O(n)
-    -> T: trailing zeros L: leading zeros n: number of ones
+    -> T: trailing zeros, L: leading zeros,  n: number of ones
 
-Coming up with an Object Oriented Design
+Coming up with an Object-Oriented Design
     -> avoid lot of code repitition, easier to partition the work based on objects, lesser maintenance code, more concision, scalable
     -> Main: an entry point to the program and just starts the game by calling game.play =() where game is an instance.
     -> Board: supposed to simulate behavior an actual physical board. It doesn't interprate its own state. It doesn't enforce any rules (it would mean
