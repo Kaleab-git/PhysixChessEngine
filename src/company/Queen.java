@@ -8,7 +8,7 @@ public class Queen {
 
     public static void loadTable(Board board) {
         for (int i=0; i<64; i++) {
-            attacksTo[i] = (HandVMoves(i, board, true) | DAndAntiDMoves(i, board, true));
+            attacksTo[i] = (HandVMoves(i, board,false,true) | DAndAntiDMoves(i, board,false,true));
         }
     }
 
@@ -23,19 +23,24 @@ public class Queen {
             queenPosition = board.BQ;
         }
         for (int i = Long.numberOfTrailingZeros(queenPosition);i < 64-Long.numberOfLeadingZeros(queenPosition); i++) {
-            if (((queenPosition>>i)&1) == 1){
-                long queenHandVMovesBoard = HandVMoves(i, board, isWhite);
-                bitboard |= queenHandVMovesBoard;
-                for (int j = Long.numberOfTrailingZeros(queenHandVMovesBoard);j < 64-Long.numberOfLeadingZeros(queenHandVMovesBoard); j++) {
-                    if (((queenHandVMovesBoard>>j)&1) == 1) {
-                        moves.add(new Move(i, j));
+            if (inBitboard) {
+                bitboard |= HandVMoves(i, board, true, isWhite);
+                bitboard |= DAndAntiDMoves(i, board, true, isWhite);
+            }
+            else {
+                if (((queenPosition>>i)&1) == 1){
+                    long enemyKing = isWhite ? board.BK:board.WK;
+                    long queenHandVMovesBoard = HandVMoves(i, board, false, isWhite)&~enemyKing;
+                    for (int j = Long.numberOfTrailingZeros(queenHandVMovesBoard);j < 64-Long.numberOfLeadingZeros(queenHandVMovesBoard); j++) {
+                        if (((queenHandVMovesBoard>>j)&1) == 1) {
+                            moves.add(new Move(i, j));
+                        }
                     }
-                }
-                long queenDandAntiDMovesBoard = DAndAntiDMoves(i, board, isWhite);
-                bitboard |= queenDandAntiDMovesBoard;
-                for (int j = Long.numberOfTrailingZeros(queenDandAntiDMovesBoard);j < 64-Long.numberOfLeadingZeros(queenDandAntiDMovesBoard); j++) {
-                    if (((queenDandAntiDMovesBoard>>j)&1) == 1) {
-                        moves.add(new Move(i, j));
+                    long queenDandAntiDMovesBoard = DAndAntiDMoves(i, board, false, isWhite)&~enemyKing;
+                    for (int j = Long.numberOfTrailingZeros(queenDandAntiDMovesBoard);j < 64-Long.numberOfLeadingZeros(queenDandAntiDMovesBoard); j++) {
+                        if (((queenDandAntiDMovesBoard>>j)&1) == 1) {
+                            moves.add(new Move(i, j));
+                        }
                     }
                 }
             }
@@ -46,11 +51,14 @@ public class Queen {
         return moves;
     }
 
-    static long HandVMoves(int s, Board board, boolean isWhite) {
+    static long HandVMoves(int s, Board board, boolean inBitboard, boolean isWhite) {
         long binaryS=1L<<s;
         long possibilitiesHorizontal = (board.OCCUPIED - 2 * binaryS) ^ Long.reverse(Long.reverse(board.OCCUPIED) - 2 * Long.reverse(binaryS));
         long possibilitiesVertical = ((board.OCCUPIED&Board.FileMasks8[s % 8]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.FileMasks8[s % 8]) - (2 * Long.reverse(binaryS)));
         long possibilities = (possibilitiesHorizontal&Board.RankMasks8[s / 8]) | (possibilitiesVertical&Board.FileMasks8[s % 8]);
+        if (inBitboard) {
+            return possibilities;
+        }
         if (isWhite == true) {
             possibilities &= ~board.WHITE_PIECES;
         }
@@ -60,12 +68,15 @@ public class Queen {
         return possibilities;
     }
 
-    static long DAndAntiDMoves(int s, Board board, boolean isWhite) {
+    static long DAndAntiDMoves(int s, Board board, boolean inBitboard, boolean isWhite) {
         long binaryS=1L<<s;
         long possibilitiesDiagonal = ((board.OCCUPIED&Board.DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.DiagonalMasks8[(s / 8) + (s % 8)]) - (2 * Long.reverse(binaryS)));
         long possibilitiesAntiDiagonal = ((board.OCCUPIED&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * binaryS)) ^ Long.reverse(Long.reverse(board.OCCUPIED&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]) - (2 * Long.reverse(binaryS)));
         long possibilities = (possibilitiesDiagonal&Board.DiagonalMasks8[(s / 8) + (s % 8)]) | (possibilitiesAntiDiagonal&Board.AntiDiagonalMasks8[(s / 8) + 7 - (s % 8)]);
-        if (isWhite == true) {
+        if (inBitboard) {
+            return possibilities;
+        }
+        if (isWhite) {
             possibilities &= ~board.WHITE_PIECES;
         }
         else {
