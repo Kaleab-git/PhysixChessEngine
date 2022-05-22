@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class Board {
     public LinkedList<Move> history = new LinkedList<Move>();
     public long WP=0L, WN=0L, WB=0L, WR=0L, WQ=0L, WK=0L, BP=0L, BN=0L, BB=0L, BR=0L, BQ=0L, BK=0L;
-    public long PrevWP=0L, PrevWN=0L, PrevWB=0L, PrevWR=0L, PrevWQ=0L, PrevWK=0L, PrevBP=0L, PrevBN=0L, PrevBB=0L, PrevBR=0L, PrevBQ=0L, PrevBK=0L;
+    private long PrevWP=0L, PrevWN=0L, PrevWB=0L, PrevWR=0L, PrevWQ=0L, PrevWK=0L, PrevBP=0L, PrevBN=0L, PrevBB=0L, PrevBR=0L, PrevBQ=0L, PrevBK=0L;
     static long FILE_A=72340172838076673L;
     static long FILE_H=-9187201950435737472L;
     static long FILE_AB=217020518514230019L;
@@ -58,14 +58,14 @@ public class Board {
 //            {"R","N","B","Q","K","B","N","R"}};
 
     private static String[][] mailbox = {
-            {"r","n","b","q"," ","b","n","r"},
-            {"p","p","p","p","p","p","p"," "},
+            {" "," "," "," "," "," "," ","q"},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
-            {" "," "," "," ","K"," "," "," "},
             {" "," "," "," "," "," "," "," "},
-            {"P","P","P"," "," "," "," ","b"},
-            {"R","N","B","Q","n","B","N","R"}};
+            {" "," "," "," "," "," "," "," "},
+            {" "," "," "," "," "," "," "," "},
+            {" ","N"," "," "," "," "," "," "},
+            {"K"," "," "," "," "," "," "," "}};
 
 
     public Board(long WP, long WN, long WB, long WR, long WQ, long WK, long BP, long BN, long BB, long BR, long BQ, long BK) {
@@ -296,9 +296,9 @@ public class Board {
     }
 
     private void updateBoard() {
-        //added BK to avoid illegal capture
-        WHITE_PIECES = (WP|WN|WB|WR|WQ|WK|BK);
-        BLACK_PIECES = (BP|BN|BB|BR|BQ|WK|BK);
+        //added enemy king to avoid illegal capture
+        WHITE_PIECES = (WP|WN|WB|WR|WQ|WK);
+        BLACK_PIECES = (BP|BN|BB|BR|BQ|BK);
         OCCUPIED = (WP|WN|WB|WR|WQ|WK|BP|BN|BB|BR|BQ|BK);
         EMPTY =~ OCCUPIED;
     }
