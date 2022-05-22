@@ -20,12 +20,13 @@ public class Agent {
 
 //        legalMoves.addAll(Pawn.getMoves(board, false, isWhite));
 //        legalMoves.addAll(Rook.getMoves(board, false, isWhite));
-//        legalMoves.addAll(King.getMoves(board, false, isWhite));
 //        legalMoves.addAll(Queen.getMoves(board, false, isWhite));
-//        legalMoves.addAll(Knight.getMoves(board, false, isWhite));
+        legalMoves.addAll(Knight.getMoves(board, false, isWhite));
 //        legalMoves.addAll(Bishop.getMoves(board, false, isWhite));
-        King.getMoves(board, true, isWhite, false);
-            for (Move move:legalMoves){
+//        reconnaissanceCall is false here. But when this king wants to know possible moves for opponent's king, it would call getMoves with reconnaissanceCall set to true
+//        legalMoves.addAll(King.getMoves(board, false, false , false));
+
+            for (Move move:legalMoves) {
             System.out.println(move.moveNotation);
         }
     }
