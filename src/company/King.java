@@ -31,16 +31,16 @@ public class King {
                     kingMovesBoard = Board.KING_SPAN<<(i-9);
                 }
                 else {
-                    System.out.println("Here");
-                    Board.drawFromBitboard(Board.KING_SPAN);
-                    Board.drawFromBitboard(Board.KING_SPAN>>>(9-i));
                     kingMovesBoard = Board.KING_SPAN>>>(9-i);
                 }
 //                Because we're not always shifting in the same direction, what files are unreachable can't be predicted
+//                Also(unrelated) we want to set our attacks bitboard before removing friendly pieces. This way we also consider squares we're defending as sqaures we're attacking.
                 if (i%8 < 4) {
+                    bitboard |= kingMovesBoard&~Board.FILE_GH;
                     kingMovesBoard &= ~Board.FILE_GH&notMyPieces;
                 }
                 else {
+                    bitboard |= kingMovesBoard&~Board.FILE_AB;
                     kingMovesBoard &= ~Board.FILE_AB&notMyPieces;
                 }
 
@@ -58,7 +58,6 @@ public class King {
                     enemyAttacks |= (long) King.getMoves(board, true, !isWhite, true).get(0);
                     kingMovesBoard &= (~enemyAttacks);
                 }
-                bitboard |= kingMovesBoard;
                 for (int j = Long.numberOfTrailingZeros(kingMovesBoard);j < 64-Long.numberOfLeadingZeros(kingMovesBoard); j++) {
                     if (((kingMovesBoard>>j)&1) == 1) {
                         moves.add(new Move(i, j));
@@ -67,7 +66,6 @@ public class King {
             }
         }
         if (inBitboard){
-            Board.drawFromBitboard(bitboard);
             return new ArrayList(Arrays.asList(bitboard));
         }
         return moves;
