@@ -40,10 +40,21 @@ public class Game {
                 agent.makeMove(mainBoard);
             }
             else {
-                System.out.println("User's turn: ");
-                String playerMove = input.nextLine();
-                Move move = new Move(playerMove);
-                mainBoard.movePiece(move);
+                boolean userInCheck = true;
+                while (userInCheck) {
+                    System.out.println("User's turn: ");
+                    String playerMove = input.nextLine();
+                    Move move = new Move(playerMove);
+                    mainBoard.movePiece(move);
+                    userInCheck = inCheck(!computerWhite, mainBoard);
+//                    If user is in check after a move, then user tried to move a pinned piece or didn't respond to a checking move appropriately
+                    if (userInCheck) {
+//                        TODO: implement inCheckMate
+//                        inCheckMate(whiteTurn, Board board);
+                        mainBoard.unmakeMove();
+                        System.out.println("Move rejected! Try a different move.");
+                    }
+                }
             }
             whiteTurn = !whiteTurn;
         }
@@ -51,7 +62,7 @@ public class Game {
 
 //     Returns true if player who's turn it is is in check
 //     Fair warning: since kingPositionIndex is initialized to 0. Even if a king doesn't exist on the board, this routine might report the king is under check.
-    private boolean inCheck(boolean whiteTurn, Board board) {
+    public static boolean inCheck(boolean whiteTurn, Board board) {
         long attacksToKing = 0L;
         attacksToKing |= (long) Pawn.getMoves(board, true, !whiteTurn).get(0);
         attacksToKing |= (long) Rook.getMoves(board, true, !whiteTurn).get(0);
@@ -61,7 +72,7 @@ public class Game {
 //        Set reconnaissanceCall to false because a King can be attacking a square even if that square is also under attack by enemy and the King can technically never occupt that square
         attacksToKing |= (long) King.getMoves(board, true, !whiteTurn, false).get(0);
         long kingPosition = whiteTurn ? board.WK:board.BK;
-        return ((attacksToKing&kingPosition) > 0);
+        return ((attacksToKing&kingPosition) != 0);
 
     }
 }

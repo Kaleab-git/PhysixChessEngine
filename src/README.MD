@@ -28,4 +28,5 @@ dictate what moves their pieces can make.
 Storing History using fixed sized collection
 -> Since removing from the first has linear time complexity for an array and an arraylist (for deques as well I think), I considered either
 -> Implementing a LinkedList class or Another class to handle addition using a fixed sized array and pointers.
--> Finally found out Java has it's own LinkedList... just went with that.
+-> Finally found out Java has it's own LinkedList... just went with that
+

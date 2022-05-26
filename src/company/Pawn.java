@@ -121,20 +121,32 @@ public class Pawn {
 //           &ing board.BP with rank5 isn't necessary. If it was a 2 square move and if it was made by a pawn, we know that piece couldn't be anywhere but rank5
                 if (lastMove.destinationIndex - lastMove.startIndex == 16 & (((board.BP&Board.RANK_5)>>lastMove.destinationIndex)&1) == 1) {
                     if (lastMove.moveNotation.charAt(3)!='a' & ((board.WP>>lastMove.destinationIndex-1)&1) == 1) {
-                        pawnMoves.add(new Move(lastMove.destinationIndex-1, lastMove.destinationIndex-8));
+                        Move move = new Move(lastMove.destinationIndex-1, lastMove.destinationIndex-8);
+                        move.enPassantMove = true;
+                        move.enPassantCaptureSquare = lastMove.destinationIndex;
+                        pawnMoves.add(move);
                     }
                     if (lastMove.moveNotation.charAt(3)!='h' & ((board.WP>>lastMove.destinationIndex+1)&1) == 1) {
-                        pawnMoves.add(new Move(lastMove.destinationIndex+1, lastMove.destinationIndex-8));
+                        Move move = new Move(lastMove.destinationIndex+1, lastMove.destinationIndex-8);
+                        move.enPassantMove = true;
+                        move.enPassantCaptureSquare = lastMove.destinationIndex;
+                        pawnMoves.add(move);
                     }
                 }
             }
             else {
                 if (lastMove.startIndex - lastMove.destinationIndex == 16 & (((board.WP&Board.RANK_4)>>lastMove.destinationIndex)&1) == 1) {
                     if (lastMove.moveNotation.charAt(3)!='a' & ((board.BP>>(lastMove.destinationIndex-1))&1) == 1) {
-                        pawnMoves.add(new Move(lastMove.destinationIndex-1, lastMove.destinationIndex+8));
+                        Move move = new Move(lastMove.destinationIndex-1, lastMove.destinationIndex+8);
+                        move.enPassantMove = true;
+                        move.enPassantCaptureSquare = lastMove.destinationIndex;
+                        pawnMoves.add(move);
                     }
                     if (lastMove.moveNotation.charAt(3)!='h' & ((board.BP>>(lastMove.destinationIndex+1))&1) == 1) {
-                        pawnMoves.add(new Move(lastMove.destinationIndex+1, lastMove.destinationIndex+8));
+                        Move move = new Move(lastMove.destinationIndex+1, lastMove.destinationIndex+8);
+                        move.enPassantMove = true;
+                        move.enPassantCaptureSquare = lastMove.destinationIndex;
+                        pawnMoves.add(move);
                     }
                 }
             }

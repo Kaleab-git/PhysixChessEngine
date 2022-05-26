@@ -16,18 +16,35 @@ public class Agent {
     }
 
     public void makeMove(Board board) {
+        ArrayList<Move> moves = new ArrayList<>();
+
+        moves.addAll(Pawn.getMoves(board, false, isWhite));
+        moves.addAll(Rook.getMoves(board, false, isWhite));
+        moves.addAll(Queen.getMoves(board, false, isWhite));
+        moves.addAll(Knight.getMoves(board, false, isWhite));
+        moves.addAll(Bishop.getMoves(board, false, isWhite));
+//        reconnaissanceCall is false here. But when this king wants to know possible moves for opponent's king, it would call getMoves with reconnaissanceCall set to true
+        moves.addAll(King.getMoves(board, false, isWhite , false));
+
         ArrayList<Move> legalMoves = new ArrayList<>();
 
-//        legalMoves.addAll(Pawn.getMoves(board, false, isWhite));
-//        legalMoves.addAll(Rook.getMoves(board, false, isWhite));
-//        legalMoves.addAll(Queen.getMoves(board, false, isWhite));
-        legalMoves.addAll(Knight.getMoves(board, false, isWhite));
-//        legalMoves.addAll(Bishop.getMoves(board, false, isWhite));
-//        reconnaissanceCall is false here. But when this king wants to know possible moves for opponent's king, it would call getMoves with reconnaissanceCall set to true
-//        legalMoves.addAll(King.getMoves(board, false, false , false));
-
-            for (Move move:legalMoves) {
-            System.out.println(move.moveNotation);
+        for (Move move:moves) {
+            board.movePiece(move);
+//            If this move doesn't result in King being in check it's a legal move. Otherwise, it's a pseudolegal move
+            if (!Game.inCheck(isWhite, board)) {
+                legalMoves.add(move);
+            }
+            board.unmakeMove();
         }
+
+        for (Move move:moves) {
+            if (!legalMoves.contains(move)) {
+                System.out.println(move.moveNotation + " REJECTED!");
+            }
+        }
+        for (Move legalMoveL:legalMoves) {
+            System.out.println(legalMoveL.moveNotation);
+        }
+
     }
 }

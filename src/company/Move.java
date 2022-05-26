@@ -1,6 +1,8 @@
 package company;
 
 public class Move {
+    public boolean enPassantMove = false;
+    public long enPassantCaptureSquare;
     public String moveNotation;
     public int[] startCell;
     public int[] destinationCell;
