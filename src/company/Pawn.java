@@ -122,13 +122,13 @@ public class Pawn {
                 if (lastMove.destinationIndex - lastMove.startIndex == 16 & (((board.BP&Board.RANK_5)>>lastMove.destinationIndex)&1) == 1) {
                     if (lastMove.moveNotation.charAt(3)!='a' & ((board.WP>>lastMove.destinationIndex-1)&1) == 1) {
                         Move move = new Move(lastMove.destinationIndex-1, lastMove.destinationIndex-8);
-                        move.enPassantMove = true;
+                        move.type = "En Passant";
                         move.enPassantCaptureSquare = lastMove.destinationIndex;
                         pawnMoves.add(move);
                     }
                     if (lastMove.moveNotation.charAt(3)!='h' & ((board.WP>>lastMove.destinationIndex+1)&1) == 1) {
                         Move move = new Move(lastMove.destinationIndex+1, lastMove.destinationIndex-8);
-                        move.enPassantMove = true;
+                        move.type = "En Passant";
                         move.enPassantCaptureSquare = lastMove.destinationIndex;
                         pawnMoves.add(move);
                     }
@@ -138,13 +138,13 @@ public class Pawn {
                 if (lastMove.startIndex - lastMove.destinationIndex == 16 & (((board.WP&Board.RANK_4)>>lastMove.destinationIndex)&1) == 1) {
                     if (lastMove.moveNotation.charAt(3)!='a' & ((board.BP>>(lastMove.destinationIndex-1))&1) == 1) {
                         Move move = new Move(lastMove.destinationIndex-1, lastMove.destinationIndex+8);
-                        move.enPassantMove = true;
+                        move.type = "En Passant";
                         move.enPassantCaptureSquare = lastMove.destinationIndex;
                         pawnMoves.add(move);
                     }
                     if (lastMove.moveNotation.charAt(3)!='h' & ((board.BP>>(lastMove.destinationIndex+1))&1) == 1) {
                         Move move = new Move(lastMove.destinationIndex+1, lastMove.destinationIndex+8);
-                        move.enPassantMove = true;
+                        move.type = "En Passant";
                         move.enPassantCaptureSquare = lastMove.destinationIndex;
                         pawnMoves.add(move);
                     }

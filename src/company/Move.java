@@ -1,7 +1,10 @@
 package company;
 
 public class Move {
-    public boolean enPassantMove = false;
+    public String type = "regular";
+//    relevant if its a promotion move
+    public char promoteToPiece;
+//    relevant if its an en passant move
     public long enPassantCaptureSquare;
     public String moveNotation;
     public int[] startCell;

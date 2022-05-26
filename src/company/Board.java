@@ -253,6 +253,78 @@ public class Board {
         }
         else {BK &= (~destinationNumber);}
 
+        if (move.type.equals("En Passant")) {
+//            because we've moved the piece from start -> destination, whichever piece is at the destination index, is the piece that made the move
+            if (((WP>>>move.destinationIndex)&1)==1) {
+                BP &= ~(move.enPassantCaptureSquare);
+            }
+            else {
+                WP &= ~(move.enPassantCaptureSquare);
+            }
+        }
+        else if (move.type.equals("casteling")) {
+//
+            switch (move.moveNotation) {
+//                King side castle for white so we move rook at h1 -> f1. Although this function is slightly recursive, there shouldn't be a problem
+//                since the next call is guarenteed to make a regular move
+                case "e1,g1":
+                    this.makeMove(new Move(63,61));
+                    break;
+                case "e1,c1":
+                    this.makeMove(new Move(56,59));
+                    break;
+                case "e8,g8":
+                    this.makeMove(new Move(7,5));
+                    break;
+                case "e8,c8":
+                    this.makeMove(new Move(0,3));
+                default:
+                    throw new IllegalStateException("Unexpected value: " + move.moveNotation);
+            }
+        }
+        else if (move.type.equals("promotion")) {
+            if (((WP>>>move.destinationIndex)&1)==1) {
+                WP &= ~((long) Math.pow(2, move.destinationIndex));
+            }
+            else {
+                BP &= ~((long) Math.pow(2, move.destinationIndex));
+            }
+            switch (move.promoteToPiece) {
+                case 'Q':
+                    if (move.destinationIndex < 8) {
+                        WQ |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    else {
+                        BQ |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    break;
+                case 'R':
+                    if (move.destinationIndex < 8) {
+                        WR |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    else {
+                        BR |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    break;
+                case 'B':
+                    if (move.destinationIndex < 8) {
+                        WB |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    else {
+                        BB |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    break;
+                case 'N':
+                    if (move.destinationIndex < 8) {
+                        WN |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    else {
+                        BN |= ((long) Math.pow(2, move.destinationIndex));
+                    }
+                    break;
+            }
+        }
+
         updateBoard();
     }
     public void drawBitboard() {
