@@ -45,7 +45,7 @@ public class Game {
                     System.out.println("User's turn: ");
                     String playerMove = input.nextLine();
                     Move move = new Move(playerMove);
-                    mainBoard.movePiece(move);
+                    mainBoard.makeMove(move);
                     userInCheck = inCheck(!computerWhite, mainBoard);
 //                    If user is in check after a move, then user tried to move a pinned piece or didn't respond to a checking move appropriately
                     if (userInCheck) {

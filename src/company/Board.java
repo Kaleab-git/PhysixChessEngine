@@ -145,7 +145,7 @@ public class Board {
             else {mailbox[i/8][i%8]=" ";}
         }
     }
-    public void movePiece(Move move) {
+    public void makeMove(Move move) {
         PrevWP = WP;
         PrevWN = WN;
         PrevWB = WB;

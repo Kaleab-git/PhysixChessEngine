@@ -29,7 +29,7 @@ public class Agent {
         ArrayList<Move> legalMoves = new ArrayList<>();
 
         for (Move move:moves) {
-            board.movePiece(move);
+            board.makeMove(move);
 //            If this move doesn't result in King being in check it's a legal move. Otherwise, it's a pseudolegal move
             if (!Game.inCheck(isWhite, board)) {
                 legalMoves.add(move);
