@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class Board {
     public LinkedList<Move> history = new LinkedList<Move>();
 //    Casteling Rights
-//    If king moves, both rights set to false. If castled, both rights set to false. If rook moves, corresponding right set to false.
+//    If castled or king moves, set both rights for that side to false. If rook moves, set corresponding right to false.
     public boolean WKC=true, WQC=true, BKC=true, BQC=true;
 //    To reset these rights when unmaking a castling move
     public boolean PrevWKC, PrevWQC, PrevBKC, PrevBQC;
@@ -283,11 +283,13 @@ public class Board {
                 case "e8,g8":
                     BR &= ~((long) Math.pow(2, 7));
                     BR |= (long) Math.pow(2, 5);
+                    this.BQC = false;
                     this.BKC = false;
                     break;
                 case "e8,c8":
                     BR &= ~((long) Math.pow(2, 0));
                     BR |= (long) Math.pow(2, 3);
+                    this.BQC = false;
                     this.BKC = false;
                     break;
                 default:
@@ -337,7 +339,7 @@ public class Board {
             }
         }
 
-// If king has moved, turn off both castling rights for that piece
+// If king has moved, turn off both castling rights for that side
         if (PrevWK != WK) {
             WKC = false;
             WQC = false;
