@@ -24,12 +24,12 @@ public class Bishop {
         else {
             bishopPosition = board.BB;
         }
-        for (int i = Long.numberOfTrailingZeros(bishopPosition);i < 64-Long.numberOfLeadingZeros(bishopPosition); i++) {
-            if (inBitboard) {
-                bitboard |= DAndAntiDMoves(i, board, true, isWhite);
-            }
-            else {
-                if (((bishopPosition>>i)&1) == 1){
+        for (int i = Long.numberOfTrailingZeros(bishopPosition); i < 64-Long.numberOfLeadingZeros(bishopPosition); i++) {
+            if (((bishopPosition>>i)&1) == 1) {
+                if (inBitboard) {
+                    bitboard |= DAndAntiDMoves(i, board, true, isWhite);
+                }
+                else {
                     long enemyKing = isWhite ? board.BK:board.WK;
                     long bishopMovesBoard = DAndAntiDMoves(i, board, false, isWhite)&~enemyKing;
                     for (int j = Long.numberOfTrailingZeros(bishopMovesBoard);j < 64-Long.numberOfLeadingZeros(bishopMovesBoard); j++) {

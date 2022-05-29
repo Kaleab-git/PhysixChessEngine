@@ -27,11 +27,12 @@ public class Rook {
         }
         for (int i = Long.numberOfTrailingZeros(rookPosition);i < 64-Long.numberOfLeadingZeros(rookPosition); i++) {
 //            if we're considering attacks only, 1) we just want the bitboard. We dont want to iterate through it. 2) we also dont want to remove friendly pieces form the board.
-            if (inBitboard) {
-                bitboard |= HandVMoves(i, board, true, isWhite);
-            }
-            else {
-                if (((rookPosition>>i)&1) == 1) {
+            if (((rookPosition>>i)&1) == 1) {
+                if (inBitboard) {
+                    bitboard |= HandVMoves(i, board, true, isWhite);
+                }
+                else {
+
                     long enemyKing = isWhite ? board.BK:board.WK;
                     long rookMovesBoard = HandVMoves(i, board, false, isWhite)&~enemyKing;
                     for (int j = Long.numberOfTrailingZeros(rookMovesBoard);j < 64-Long.numberOfLeadingZeros(rookMovesBoard); j++) {

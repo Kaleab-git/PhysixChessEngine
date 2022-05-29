@@ -22,13 +22,13 @@ public class Queen {
         else {
             queenPosition = board.BQ;
         }
-        for (int i = Long.numberOfTrailingZeros(queenPosition);i < 64-Long.numberOfLeadingZeros(queenPosition); i++) {
-            if (inBitboard) {
-                bitboard |= HandVMoves(i, board, true, isWhite);
-                bitboard |= DAndAntiDMoves(i, board, true, isWhite);
-            }
-            else {
-                if (((queenPosition>>i)&1) == 1){
+        for (int i = Long.numberOfTrailingZeros(queenPosition); i < 64-Long.numberOfLeadingZeros(queenPosition); i++) {
+            if (((queenPosition>>i)&1) == 1) {
+                if (inBitboard) {
+                    bitboard |= HandVMoves(i, board, true, isWhite);
+                    bitboard |= DAndAntiDMoves(i, board, true, isWhite);
+                }
+                else {
                     long enemyKing = isWhite ? board.BK:board.WK;
                     long queenHandVMovesBoard = HandVMoves(i, board, false, isWhite)&~enemyKing;
                     for (int j = Long.numberOfTrailingZeros(queenHandVMovesBoard);j < 64-Long.numberOfLeadingZeros(queenHandVMovesBoard); j++) {
