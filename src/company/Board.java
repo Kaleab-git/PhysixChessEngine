@@ -5,6 +5,12 @@ import java.util.Arrays;
 
 public class Board {
     public LinkedList<Move> history = new LinkedList<Move>();
+//    Casteling Rights
+//    If king moves, both rights set to false. If castled, both rights set to false. If rook moves, corresponding right set to false.
+    public boolean WKC=true, WQC=true, BKC=true, BQC=true;
+//    To reset these rights when unmaking a castling move
+    public boolean PrevWKC, PrevWQC, PrevBKC, PrevBQC;
+//    Bitboards
     public long WP=0L, WN=0L, WB=0L, WR=0L, WQ=0L, WK=0L, BP=0L, BN=0L, BB=0L, BR=0L, BQ=0L, BK=0L;
     private long PrevWP=0L, PrevWN=0L, PrevWB=0L, PrevWR=0L, PrevWQ=0L, PrevWK=0L, PrevBP=0L, PrevBN=0L, PrevBB=0L, PrevBR=0L, PrevBQ=0L, PrevBK=0L;
     static long FILE_A=72340172838076673L;
@@ -158,12 +164,10 @@ public class Board {
         PrevBR = BR;
         PrevBQ = BQ;
         PrevBK = BK;
-
-        if (history.size() > 50) {
-            history.removeFirst();
-        }
-        history.add(move);
-
+        PrevWKC = WKC;
+        PrevWQC = WQC;
+        PrevBKC = BKC;
+        PrevBQC = BQC;
 //        Remove the piece from start position and place it at destination. Remove any piece at the destination
         long startNumber;
         long destinationNumber;
@@ -262,22 +266,30 @@ public class Board {
                 WP &= ~(move.enPassantCaptureSquare);
             }
         }
-        else if (move.type.equals("casteling")) {
-//
+        else if (move.type.equals("Castling")) {
             switch (move.moveNotation) {
 //                King side castle for white so we move rook at h1 -> f1. Although this function is slightly recursive, there shouldn't be a problem
 //                since the next call is guarenteed to make a regular move
                 case "e1,g1":
-                    this.makeMove(new Move(63,61));
+                    WR &= ~(-9223372036854775808L);
+                    WR |= (long) Math.pow(2, 61);
+                    this.WKC = false;
                     break;
                 case "e1,c1":
-                    this.makeMove(new Move(56,59));
+                    WR &= ~((long) Math.pow(2, 56));
+                    WR |= (long) Math.pow(2, 59);
+                    this.WQC = false;
                     break;
                 case "e8,g8":
-                    this.makeMove(new Move(7,5));
+                    BR &= ~((long) Math.pow(2, 7));
+                    BR |= (long) Math.pow(2, 5);
+                    this.BKC = false;
                     break;
                 case "e8,c8":
-                    this.makeMove(new Move(0,3));
+                    BR &= ~((long) Math.pow(2, 0));
+                    BR |= (long) Math.pow(2, 3);
+                    this.BKC = false;
+                    break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + move.moveNotation);
             }
@@ -325,8 +337,28 @@ public class Board {
             }
         }
 
+// If king has moved, turn off both castling rights for that piece
+        if (PrevWK != WK) {
+            WKC = false;
+            WQC = false;
+        }
+        if (PrevBK != BK) {
+            BKC = false;
+            BQC = false;
+        }
+// If rook has moved or been captured, turn off cooresponding castling rights. Also we're doing "&=" because once the values become false, we want that to be permanent
+        WKC &= ((WR>>63)&1)==1;
+        WQC &= ((WR>>56)&1)==1;
+        BKC &= ((BR>>7)&1)==1;
+        BQC &= ((BR>>0)&1)==1;
+
+        if (history.size() > 50) {
+            history.removeFirst();
+        }
+        history.add(move);
         updateBoard();
     }
+
     public void drawBitboard() {
         String[][] chessBoard = new String[8][8];
         for (int i=0;i<64;i++) {
@@ -388,6 +420,10 @@ public class Board {
         BR = PrevBR;
         BQ = PrevBQ;
         BK = PrevBK;
+        WKC = PrevWKC;
+        WQC = PrevWQC;
+        BKC = PrevBKC;
+        BQC = PrevBQC;
         this.updateBoard();
         history.remove(history.size()-1);
     }
