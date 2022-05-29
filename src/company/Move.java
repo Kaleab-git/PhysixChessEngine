@@ -1,7 +1,7 @@
 package company;
 
 public class Move {
-    public String type = "regular";
+    public String type = "Regular";
 //    relevant if its a promotion move
     public char promoteToPiece;
 //    relevant if its an en passant move
@@ -43,7 +43,7 @@ public class Move {
 
     public static String indexToString(int start, int end){
         String RANKS = "abcdefgh";
-        return "" + RANKS.charAt((start%8)) + (8-start/8) + "," + RANKS.charAt((end%8)) + (8-end/8) + "\n";
+        return "" + RANKS.charAt((start%8)) + (8-start/8) + "," + RANKS.charAt((end%8)) + (8-end/8);
     }
 
 }

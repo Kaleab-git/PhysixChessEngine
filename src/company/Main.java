@@ -14,6 +14,8 @@ public class Main {
 /*        TODO: Board class is becoming messy. Maybe split it into 2. 1) Would contain static methods(drawing, converting)
                 2) Would contain Board instance specific logic                                                    */
 //        TODO: En passant is not recognized if it's made by the user?
+//        TODO: Code in Game.inCheck() is literally the same as a certain part of King's getMoves logic
+//        FIXME: board.history is not correct. When castling we add 2 moves. When unmaking a castle move, we only remove the last one.
         Game game = new Game();
         game.play();
     }
