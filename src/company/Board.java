@@ -260,10 +260,10 @@ public class Board {
         if (move.type.equals("En Passant")) {
 //            because we've moved the piece from start -> destination, whichever piece is at the destination index, is the piece that made the move
             if (((WP>>>move.destinationIndex)&1)==1) {
-                BP &= ~(move.enPassantCaptureSquare);
+                BP &= ~((long) Math.pow(2, move.enPassantCaptureSquare));
             }
             else {
-                WP &= ~(move.enPassantCaptureSquare);
+                WP &= ~((long) Math.pow(2, move.enPassantCaptureSquare));
             }
         }
         else if (move.type.equals("Castling")) {
@@ -294,7 +294,7 @@ public class Board {
                     throw new IllegalStateException("Unexpected value: " + move.moveNotation);
             }
         }
-        else if (move.type.equals("promotion")) {
+        else if (move.type.equals("Promotion")) {
             if (((WP>>>move.destinationIndex)&1)==1) {
                 WP &= ~((long) Math.pow(2, move.destinationIndex));
             }
