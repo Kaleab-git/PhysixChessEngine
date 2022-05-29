@@ -90,6 +90,8 @@ public class Pawn {
         for (int i = Long.numberOfTrailingZeros(forwardPromotion);i < 64-Long.numberOfLeadingZeros(forwardPromotion); i++){
             if (((forwardPromotion>>i) & 1) == 1) {
                 Move move = isWhite ? new Move(i+8, i) : new Move(i-8, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'Q';
                 pawnMoves.add(move);
             }
         }
@@ -100,6 +102,8 @@ public class Pawn {
         for (int i = Long.numberOfTrailingZeros(rightPromotion);i < 64-Long.numberOfLeadingZeros(rightPromotion); i++){
             if (((rightPromotion>>i) & 1) == 1) {
                 Move move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'N';
                 pawnMoves.add(move);
             }
         }
@@ -110,6 +114,8 @@ public class Pawn {
         for (int i = Long.numberOfTrailingZeros(leftPromotion);i < 64-Long.numberOfLeadingZeros(leftPromotion); i++){
             if (((leftPromotion>>i) & 1) == 1) {
                 Move move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'Q';
                 pawnMoves.add(move);
             }
         }
