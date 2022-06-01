@@ -89,9 +89,22 @@ public class Pawn {
         long forwardPromotion = isWhite ? ((board.WP>>>8)&board.EMPTY&Board.RANK_8) : ((board.BP<<8)&board.EMPTY&Board.RANK_1);
         for (int i = Long.numberOfTrailingZeros(forwardPromotion);i < 64-Long.numberOfLeadingZeros(forwardPromotion); i++){
             if (((forwardPromotion>>i) & 1) == 1) {
-                Move move = isWhite ? new Move(i+8, i) : new Move(i-8, i);
+                Move move;
+                move = isWhite ? new Move(i+8, i) : new Move(i-8, i);
                 move.type = "Promotion";
                 move.promoteToPiece = 'Q';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+8, i) : new Move(i-8, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'R';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+8, i) : new Move(i-8, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'B';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+8, i) : new Move(i-8, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'N';
                 pawnMoves.add(move);
             }
         }
@@ -101,10 +114,24 @@ public class Pawn {
         rightPromotion = isWhite ? rightPromotion&~board.BK : rightPromotion&~board.WK;
         for (int i = Long.numberOfTrailingZeros(rightPromotion);i < 64-Long.numberOfLeadingZeros(rightPromotion); i++){
             if (((rightPromotion>>i) & 1) == 1) {
-                Move move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
+                Move move;
+                move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'Q';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'R';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'B';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+7, i) : new Move(i-9, i);
                 move.type = "Promotion";
                 move.promoteToPiece = 'N';
                 pawnMoves.add(move);
+
             }
         }
 //        Promotion by capturing to the left
@@ -113,9 +140,22 @@ public class Pawn {
         leftPromotion = isWhite ? leftPromotion&~board.BK : leftPromotion&~board.WK;
         for (int i = Long.numberOfTrailingZeros(leftPromotion);i < 64-Long.numberOfLeadingZeros(leftPromotion); i++){
             if (((leftPromotion>>i) & 1) == 1) {
-                Move move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
+                Move move;
+                move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
                 move.type = "Promotion";
                 move.promoteToPiece = 'Q';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'R';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'B';
+                pawnMoves.add(move);
+                move = isWhite ? new Move(i+9, i) : new Move(i-7, i);
+                move.type = "Promotion";
+                move.promoteToPiece = 'N';
                 pawnMoves.add(move);
             }
         }
