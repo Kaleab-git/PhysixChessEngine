@@ -1,5 +1,6 @@
 package company;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Arrays;
 
@@ -7,12 +8,30 @@ public class Board {
     public LinkedList<Move> history = new LinkedList<Move>();
 //    Casteling Rights
 //    If castled or king moves, set both rights for that side to false. If rook moves, set corresponding right to false.
-    public boolean WKC=true, WQC=true, BKC=true, BQC=true;
+    public boolean WKC=true, WQC=true, BKC=false, BQC=false;
 //    To reset these rights when unmaking a castling move
     public boolean PrevWKC, PrevWQC, PrevBKC, PrevBQC;
-//    Bitboards
+    private ArrayList<Boolean> PrevWKCs = new ArrayList();
+    private ArrayList<Boolean> PrevWQCs = new ArrayList();
+    private ArrayList<Boolean> PrevBKCs = new ArrayList();
+    private ArrayList<Boolean> PrevBQCs = new ArrayList();
+
+    //    Bitboards
     public long WP=0L, WN=0L, WB=0L, WR=0L, WQ=0L, WK=0L, BP=0L, BN=0L, BB=0L, BR=0L, BQ=0L, BK=0L;
     private long PrevWP=0L, PrevWN=0L, PrevWB=0L, PrevWR=0L, PrevWQ=0L, PrevWK=0L, PrevBP=0L, PrevBN=0L, PrevBB=0L, PrevBR=0L, PrevBQ=0L, PrevBK=0L;
+    private ArrayList<Long> PrevWPs = new ArrayList();
+    private ArrayList<Long> PrevWNs = new ArrayList();
+    private ArrayList<Long> PrevWBs = new ArrayList();
+    private ArrayList<Long> PrevWRs = new ArrayList();
+    private ArrayList<Long> PrevWQs = new ArrayList();
+    private ArrayList<Long> PrevWKs = new ArrayList();
+    private ArrayList<Long> PrevBPs = new ArrayList();
+    private ArrayList<Long> PrevBNs = new ArrayList();
+    private ArrayList<Long> PrevBBs = new ArrayList();
+    private ArrayList<Long> PrevBRs = new ArrayList();
+    private ArrayList<Long> PrevBQs = new ArrayList();
+    private ArrayList<Long> PrevBKs = new ArrayList();
+
     static long FILE_A=72340172838076673L;
     static long FILE_H=-9187201950435737472L;
     static long FILE_AB=217020518514230019L;
@@ -53,25 +72,25 @@ public class Board {
                     0x8040201008040201L, 0x4020100804020100L, 0x2010080402010000L, 0x1008040201000000L,
                     0x804020100000000L, 0x402010000000000L, 0x201000000000000L, 0x100000000000000L
             };
-//    private static String[][] mailbox = {
-//            {"r","n","b","q","k","b","n","r"},
-//            {"p","p","p","p","p","p","p","p"},
-//            {" "," "," "," "," "," "," "," "},
-//            {" "," "," "," "," "," "," "," "},
-//            {" "," "," "," "," "," "," "," "},
-//            {" "," "," "," "," "," "," "," "},
-//            {"P","P","P","P","P","P","P","P"},
-//            {"R","N","B","Q","K","B","N","R"}};
-
     private static String[][] mailbox = {
-            {" "," "," "," "," "," "," ","q"},
+            {"r","n"," ","q"," ","k"," ","r"},
+            {"p","p"," "," ","b","p","p","p"},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
-            {" "," "," "," "," "," "," "," "},
-            {" "," "," "," "," "," "," "," "},
-            {" ","N"," "," "," "," "," "," "},
-            {"K"," "," "," "," "," "," "," "}};
+            {" "," "," ","n"," "," "," "," "},
+            {"P","P","P","B","N"," ","P","P"},
+            {"R","P"," ","Q","K"," "," ","R"}};
+
+//    private static String[][] mailbox = {
+//            {" "," "," "," "," "," "," "," "},
+//            {"p"," "," "," "," "," "," "," "},
+//            {" "," "," "," "," "," "," "," "},
+//            {" "," "," "," "," "," "," "," "},
+//            {" "," "," "," "," "," "," "," "},
+//            {" "," "," "," "," "," "," "," "},
+//            {"P"," "," "," "," "," "," "," "},
+//            {" "," "," "," "," "," "," "," "},};
 
 
     public Board(long WP, long WN, long WB, long WR, long WQ, long WK, long BP, long BN, long BB, long BR, long BQ, long BK) {
@@ -97,8 +116,93 @@ public class Board {
         this.updateBoard();
     }
 
-    public void
-    updateBitboards() {
+    public Board(String fenString) {
+//        Does not support En passant yet
+        WP=0; WN=0; WB=0;
+        WR=0; WQ=0; WK=0;
+        BP=0; BN=0; BB=0;
+        BR=0; BQ=0; BK=0;
+        WKC=false; WQC=false;
+        BKC=false; BQC=false;
+        int charIndex = 0;
+        int boardIndex = 0;
+        while (fenString.charAt(charIndex) != ' ')
+        {
+            switch (fenString.charAt(charIndex++))
+            {
+                case 'P': WP |= (1L << boardIndex++);
+                    break;
+                case 'p': BP |= (1L << boardIndex++);
+                    break;
+                case 'N': WN |= (1L << boardIndex++);
+                    break;
+                case 'n': BN |= (1L << boardIndex++);
+                    break;
+                case 'B': WB |= (1L << boardIndex++);
+                    break;
+                case 'b': BB |= (1L << boardIndex++);
+                    break;
+                case 'R': WR |= (1L << boardIndex++);
+                    break;
+                case 'r': BR |= (1L << boardIndex++);
+                    break;
+                case 'Q': WQ |= (1L << boardIndex++);
+                    break;
+                case 'q': BQ |= (1L << boardIndex++);
+                    break;
+                case 'K': WK |= (1L << boardIndex++);
+                    break;
+                case 'k': BK |= (1L << boardIndex++);
+                    break;
+                case '/':
+                    break;
+                case '1': boardIndex++;
+                    break;
+                case '2': boardIndex += 2;
+                    break;
+                case '3': boardIndex += 3;
+                    break;
+                case '4': boardIndex += 4;
+                    break;
+                case '5': boardIndex += 5;
+                    break;
+                case '6': boardIndex += 6;
+                    break;
+                case '7': boardIndex += 7;
+                    break;
+                case '8': boardIndex += 8;
+                    break;
+                default:
+                    break;
+            }
+            this.updateMailbox();
+            this.updateBoard();
+        }
+//        This variable is not going to be used. turn is a private variable of the game class and board does not have acess to it
+        Main.whiteTurn = (fenString.charAt(++charIndex) == 'w');
+        charIndex += 2;
+        while (fenString.charAt(charIndex) != ' ')
+        {
+            switch (fenString.charAt(charIndex++))
+            {
+                case '-':
+                    break;
+                case 'K': WKC = true;
+                    break;
+                case 'Q': WQC = true;
+                    break;
+                case 'k': BKC = true;
+                    break;
+                case 'q': BQC = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+  }
+
+
+    public void updateBitboards() {
         String binary;
         WP=0L; WN=0L; WB=0L; WR=0L; WQ=0L; WK=0L; BP=0L; BN=0L; BB=0L; BR=0L; BQ=0L; BK=0L;
         for (int i=0; i<64; i++){
@@ -152,22 +256,22 @@ public class Board {
         }
     }
     public void makeMove(Move move) {
-        PrevWP = WP;
-        PrevWN = WN;
-        PrevWB = WB;
-        PrevWR = WR;
-        PrevWQ = WQ;
-        PrevWK = WK;
-        PrevBP = BP;
-        PrevBN = BN;
-        PrevBB = BB;
-        PrevBR = BR;
-        PrevBQ = BQ;
-        PrevBK = BK;
-        PrevWKC = WKC;
-        PrevWQC = WQC;
-        PrevBKC = BKC;
-        PrevBQC = BQC;
+        PrevWPs.add(WP);
+        PrevWNs.add(WN);
+        PrevWBs.add(WB);
+        PrevWRs.add(WR);
+        PrevWQs.add(WQ);
+        PrevWKs.add(WK);
+        PrevBPs.add(BP);
+        PrevBNs.add(BN);
+        PrevBBs.add(BB);
+        PrevBRs.add(BR);
+        PrevBQs.add(BQ);
+        PrevBKs.add(BK);
+        PrevWKCs.add(WKC);
+        PrevWQCs.add(WQC);
+        PrevBKCs.add(BKC);
+        PrevBQCs.add(BQC);
 //        Remove the piece from start position and place it at destination. Remove any piece at the destination
         long startNumber;
         long destinationNumber;
@@ -340,11 +444,11 @@ public class Board {
         }
 
 // If king has moved, turn off both castling rights for that side
-        if (PrevWK != WK) {
+        if (PrevWKs.get(PrevWKs.size()-1) != WK) {
             WKC = false;
             WQC = false;
         }
-        if (PrevBK != BK) {
+        if (PrevBKs.get(PrevBKs.size()-1) != BK) {
             BKC = false;
             BQC = false;
         }
@@ -410,22 +514,22 @@ public class Board {
     }
 
     public void unmakeMove() {
-        WP = PrevWP;
-        WN = PrevWN;
-        WB = PrevWB;
-        WR = PrevWR;
-        WQ = PrevWQ;
-        WK = PrevWK;
-        BP = PrevBP;
-        BN = PrevBN;
-        BB = PrevBB;
-        BR = PrevBR;
-        BQ = PrevBQ;
-        BK = PrevBK;
-        WKC = PrevWKC;
-        WQC = PrevWQC;
-        BKC = PrevBKC;
-        BQC = PrevBQC;
+        WP = PrevWPs.remove(PrevWPs.size()-1);
+        WN = PrevWNs.remove(PrevWNs.size()-1);
+        WB = PrevWBs.remove(PrevWBs.size()-1);
+        WR = PrevWRs.remove(PrevWRs.size()-1);
+        WQ = PrevWQs.remove(PrevWQs.size()-1);
+        WK = PrevWKs.remove(PrevWKs.size()-1);
+        BP = PrevBPs.remove(PrevBPs.size()-1);
+        BN = PrevBNs.remove(PrevBNs.size()-1);
+        BB = PrevBBs.remove(PrevBBs.size()-1);
+        BR = PrevBRs.remove(PrevBRs.size()-1);
+        BQ = PrevBQs.remove(PrevBQs.size()-1);
+        BK = PrevBKs.remove(PrevBKs.size()-1);
+        WKC = PrevWKCs.remove(PrevWKCs.size()-1);
+        WQC = PrevWQCs.remove(PrevWQCs.size()-1);
+        BKC = PrevBKCs.remove(PrevBKCs.size()-1);
+        BQC = PrevBQCs.remove(PrevBQCs.size()-1);
         this.updateBoard();
         history.remove(history.size()-1);
     }
