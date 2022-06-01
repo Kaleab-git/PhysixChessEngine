@@ -60,7 +60,7 @@ public class King {
                 }
 //              Casteling
                 boolean kingSide = isWhite ? board.WKC:board.BKC;
-                boolean queenSide = isWhite ? board.WQC:board.WKC;
+                boolean queenSide = isWhite ? board.WQC:board.BQC;
 //                Squares inbetween King and rook depending on color and side
                 long kingSideSquares = isWhite ? 6917529027641081856L:96;
                 long queenSideSqueares = isWhite ? 1008806316530991104L:14;

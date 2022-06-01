@@ -4,12 +4,6 @@ import java.util.ArrayList;
 
 public class Agent {
     private boolean isWhite;
-    private Pawn pawn;
-    private Rook rook;
-    private King king;
-    private Queen queen;
-    private Knight knight;
-    private Bishop bishop;
 
     public Agent(boolean computerWhite) {
         this.isWhite = computerWhite;
