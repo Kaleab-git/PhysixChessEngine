@@ -32,7 +32,6 @@ public class Rook {
                     bitboard |= HandVMoves(i, board, true, isWhite);
                 }
                 else {
-
                     long enemyKing = isWhite ? board.BK:board.WK;
                     long rookMovesBoard = HandVMoves(i, board, false, isWhite)&~enemyKing;
                     for (int j = Long.numberOfTrailingZeros(rookMovesBoard);j < 64-Long.numberOfLeadingZeros(rookMovesBoard); j++) {

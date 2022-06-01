@@ -1,10 +1,9 @@
 package company;
 
-        import javax.swing.plaf.synth.SynthTextAreaUI;
-        import java.util.ArrayList;
-
 public class Main {
-    public static void main(String[] args){
+    public static boolean whiteTurn = true;
+
+    public static void main(String[] args) {
 //        TODO: Change how you iterate through bits from trailing -> leading to just jumping to where we have 1s.
 //        TODO: Create an iterator class for iterating through bits in the most optimal way
 //        TODO: Measure the time difference between normal iteration and optimal iteration
@@ -16,7 +15,17 @@ public class Main {
 //        TODO: En passant is not recognized if it's made by the user?
 //        TODO: Code in Game.inCheck() is literally the same as a certain part of King's getMoves logic
 //        FIXME: board.history is not correct. When castling we add 2 moves. When unmaking a castle move, we only remove the last one.
-        Game game = new Game();
-        game.play();
+//        Game game = new Game();
+//        game.play();
+        Board board = new Board("r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10");
+        board.drawBitboard();
+        int depth = 9;
+        for (int i=1; i<=depth; i++) {
+            long startTime = System.currentTimeMillis();
+            int perftCount = Perft.divide(i, board, whiteTurn, new Move("_0,_0"));
+            long endTime = System.currentTimeMillis();
+            long duration = (endTime - startTime);
+            System.out.println("Depth: " + i + " ply    Result: " + perftCount + " positions    Time: " + duration + " milliseconds");
+        }
     }
 }
