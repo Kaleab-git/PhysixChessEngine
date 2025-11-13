@@ -1,5 +1,7 @@
 package company;
 
+import java.util.Objects;
+
 public class Move {
     public String type = "Regular";
 //    relevant if its a promotion move
@@ -46,4 +48,28 @@ public class Move {
         return "" + RANKS.charAt((start%8)) + (8-start/8) + "," + RANKS.charAt((end%8)) + (8-end/8);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        // Check if it's a self reference (same object in memory)
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Move otherMove = (Move) o;
+        return Objects.equals(type, otherMove.type) &&
+                startIndex == otherMove.startIndex &&
+                destinationIndex == otherMove.destinationIndex;
+    }
+
+    @Override
+    public int hashCode() {
+        // Make sure two objects equal by equals(), have the same hash code.
+        // Prolly important for any caching or move tables
+        return Objects.hash(type, startIndex, destinationIndex);
+    }
+
+    @Override
+    public String toString() {
+        return moveNotation;
+    }
 }

@@ -1,11 +1,12 @@
 package company;
 
+import company.agent.Agent;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
     public String[] history;
-    private boolean whiteTurn = true;
-    private boolean computerWhite = true;
 
     public Game() {}
 
@@ -16,7 +17,8 @@ public class Game {
     public boolean checkMate() {return false;}
 
     public void play() {
-        Agent agent = new Agent(computerWhite);
+        boolean agentWhite = false;
+        Agent agent = new Agent(agentWhite, false);
         Scanner input = new Scanner(System.in);
 
 //        Initialize a bitboard to starting position described by mailbox
@@ -33,26 +35,26 @@ public class Game {
         Knight.loadTable(emptyBoard);
         Bishop.loadTable(emptyBoard);
 
+        boolean whiteTurn = true;
         while (true) {
             mainBoard.drawBitboard();
-            if (computerWhite == whiteTurn) {
+            if (agentWhite == whiteTurn) {
+                Move agentMove = agent.makeMove(mainBoard);
+                mainBoard.makeMove(agentMove);
                 System.out.println("Computer made super smart move in 0.0001 microseconds");
-                agent.makeMove(mainBoard);
             }
             else {
-                boolean userInCheck = true;
-                while (userInCheck) {
+                boolean legalMoveMade = false;
+                while (!legalMoveMade) {
                     System.out.println("User's turn: ");
-                    String playerMove = input.nextLine();
-                    Move move = new Move(playerMove);
-                    mainBoard.makeMove(move);
-                    userInCheck = inCheck(!computerWhite, mainBoard);
-//                    If user is in check after a move, then user tried to move a pinned piece or didn't respond to a checking move appropriately
-                    if (userInCheck) {
-//                        TODO: implement inCheckMate
-//                        inCheckMate(whiteTurn, Board board);
+                    Move playerMove = new Move(input.nextLine());
+
+                    if (!isLegal(playerMove, mainBoard, whiteTurn)) {
                         mainBoard.unmakeMove();
-                        System.out.println("Move rejected! Try a different move.");
+                        System.out.println("Illegal move: " + playerMove.moveNotation + ". Make a different move.");
+                    } else{
+                        mainBoard.makeMove(playerMove);
+                        legalMoveMade = true;
                     }
                 }
             }
@@ -60,7 +62,7 @@ public class Game {
         }
     }
 
-//     Returns true if player who's turn it is is in check
+//     Returns true if player whose turn it is in check
 //     Fair warning: since kingPositionIndex is initialized to 0. Even if a king doesn't exist on the board, this routine might report the king is under check.
     public static boolean inCheck(boolean whiteTurn, Board board) {
         long attacksToKing = 0L;
@@ -69,10 +71,38 @@ public class Game {
         attacksToKing |= (long) Queen.getMoves(board, true, !whiteTurn).get(0);
         attacksToKing |= (long) Knight.getMoves(board, true, !whiteTurn).get(0);
         attacksToKing |= (long) Bishop.getMoves(board, true, !whiteTurn).get(0);
-//        Set reconnaissanceCall to false because a King can be attacking a square even if that square is also under attack by enemy and the King can technically never occupt that square
+//        Set reconnaissanceCall to false because a King can be attacking a square even if that square is also under
+//        attack by enemy and the King can technically never occupy that square
         attacksToKing |= (long) King.getMoves(board, true, !whiteTurn, false).get(0);
         long kingPosition = whiteTurn ? board.WK:board.BK;
         return ((attacksToKing&kingPosition) != 0);
 
+    }
+
+    public static boolean isLegal(Move move, Board board, boolean whiteTurn) {
+        return getLegalMoves(board, whiteTurn).contains(move);
+    }
+
+    public static ArrayList<Move> getLegalMoves(Board board, boolean whiteTurn) {
+        ArrayList<Move> moves = new ArrayList<>();
+
+        moves.addAll(Pawn.getMoves(board, false, whiteTurn));
+        moves.addAll(Rook.getMoves(board, false, whiteTurn));
+        moves.addAll(Queen.getMoves(board, false, whiteTurn));
+        moves.addAll(Knight.getMoves(board, false, whiteTurn));
+        moves.addAll(Bishop.getMoves(board, false, whiteTurn));
+//        reconnaissanceCall is false here. But when this king wants to know possible moves for opponent's king, it would call getMoves with reconnaissanceCall set to true
+        moves.addAll(King.getMoves(board, false, whiteTurn , false));
+
+        ArrayList<Move> legalMoves = new ArrayList<>();
+
+        for (Move mv:moves) {
+            board.makeMove(mv);
+            if (!Game.inCheck(whiteTurn, board)) {
+                legalMoves.add(mv);
+            }
+            board.unmakeMove();
+        }
+        return legalMoves;
     }
 }
